@@ -1,0 +1,26 @@
+# Robots.txt for Digicam Market
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /admin
+Disallow: /api/
+Disallow: /_next/
+Disallow: /login
+Disallow: /signup
+
+# Allow search engines to crawl important pages
+Allow: /
+Allow: /allProducts
+Allow: /category/
+Allow: /about
+Allow: /contact
+Allow: /productDetails/
+
+# Sitemap location
+Sitemap: https://digicammarket.com/sitemap.xml
+
+# Crawl-delay (optional, for polite crawlers)
+Crawl-delay: 1
