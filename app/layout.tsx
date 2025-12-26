@@ -3,8 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import StoreProvider from "@/lib/redux/StoreProvider";
 import QueryProvider from "@/lib/QueryProvider";
-import Footer from "./components/Footer";
-import Navbar from "./components/Navbar";
+import ConditionalLayout from "./components/ConditionalLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -214,9 +213,7 @@ export default function RootLayout({
       >
         <StoreProvider>
           <QueryProvider>
-            <Navbar />
-            {children}
-            <Footer />
+            <ConditionalLayout>{children}</ConditionalLayout>
           </QueryProvider>
         </StoreProvider>
       </body>
