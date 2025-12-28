@@ -1,5 +1,8 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 // Demo social media data
 const socialsData = [
@@ -107,24 +110,35 @@ const cn = (classes: (string | boolean | undefined)[]) => {
 const LinksSection = () => {
   return (
     <>
-      {footerLinksData.map((section) => (
-        <div key={section.id} className="mb-6 lg:mb-0">
+      {footerLinksData.map((section, sectionIndex) => (
+        <motion.div 
+          key={section.id} 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: sectionIndex * 0.1, duration: 0.5 }}
+          className="mb-6 lg:mb-0"
+        >
           <h2 className="text-white font-medium tracking-wider mb-4 text-sm uppercase">
             {section.title}
           </h2>
           <ul className="space-y-3">
             {section.links.map((link, index) => (
-              <li key={index}>
+              <motion.li 
+                key={index}
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.2 }}
+              >
                 <Link
                   href={link.href}
                   className="text-white/60 hover:text-white text-sm transition-colors duration-200"
                 >
                   {link.name}
                 </Link>
-              </li>
+              </motion.li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       ))}
     </>
   );
@@ -188,17 +202,26 @@ const Footer = () => {
                 own. Quality items at affordable prices for everyone.
               </p>
               <div className="flex items-center">
-                {socialsData.map((social) => (
-                  <Link
-                    href={social.url}
+                {socialsData.map((social, index) => (
+                  <motion.div
                     key={social.id}
-                    className="bg-white hover:bg-gray-200 hover:text-black transition-all mr-3 w-7 h-7 rounded-full border border-white/20 flex items-center justify-center p-1.5 text-black"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Follow us on ${social.name}`}
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, type: "spring", stiffness: 200 }}
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    {social.icon}
-                  </Link>
+                    <Link
+                      href={social.url}
+                      className="bg-white hover:bg-gray-200 hover:text-black transition-all mr-3 w-7 h-7 rounded-full border border-white/20 flex items-center justify-center p-1.5 text-black"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Follow us on ${social.name}`}
+                    >
+                      {social.icon}
+                    </Link>
+                  </motion.div>
                 ))}
               </div>
             </div>

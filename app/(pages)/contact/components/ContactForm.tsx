@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { Send, Loader2, CheckCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import Swal from "sweetalert2";
@@ -103,13 +104,23 @@ export default function ContactForm() {
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, x: -30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+    >
       <h2 className="text-3xl font-bold text-gray-900 mb-6">
         Send Us a Message
       </h2>
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
             <label
               htmlFor="firstName"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -125,8 +136,13 @@ export default function ContactForm() {
               required
               disabled={isSubmitting}
             />
-          </div>
-          <div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
             <label
               htmlFor="lastName"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -142,10 +158,15 @@ export default function ContactForm() {
               required
               disabled={isSubmitting}
             />
-          </div>
+          </motion.div>
         </div>
 
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+        >
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 mb-2"
@@ -161,9 +182,14 @@ export default function ContactForm() {
             required
             disabled={isSubmitting}
           />
-        </div>
+        </motion.div>
 
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
           <label
             htmlFor="subject"
             className="block text-sm font-medium text-gray-700 mb-2"
@@ -184,9 +210,14 @@ export default function ContactForm() {
             <option value="Returns & Refunds">Returns & Refunds</option>
             <option value="Wholesale Inquiry">Wholesale Inquiry</option>
           </select>
-        </div>
+        </motion.div>
 
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+        >
           <label
             htmlFor="message"
             className="block text-sm font-medium text-gray-700 mb-2"
@@ -202,9 +233,15 @@ export default function ContactForm() {
             required
             disabled={isSubmitting}
           />
-        </div>
+        </motion.div>
 
-        <button
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isSubmitting}
           className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
@@ -231,8 +268,8 @@ export default function ContactForm() {
               Send Message
             </>
           )}
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 }

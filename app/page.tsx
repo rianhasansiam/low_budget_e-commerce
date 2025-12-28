@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import HeroCarousel from "./components/HeroCarousel";
 
 import FeaturedProducts from "./components/FeaturedProducts";
+import AllProductsSection from "./components/AllProductsSection";
 
-
-import NewsletterSection from "./components/NewsletterSection";
 import CategoriesSection from "./components/CategoriesSection";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://digicammarket.com";
@@ -92,10 +91,9 @@ export default function Home() {
      
       <CategoriesSection />
       <FeaturedProducts />
+      <AllProductsSection />
 
       
-
-      <NewsletterSection />
     </main>
   );
 }

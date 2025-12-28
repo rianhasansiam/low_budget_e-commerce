@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 interface HeroSlide {
@@ -214,23 +215,31 @@ export default function HeroCarousel() {
 
         {/* Side Banners */}
         <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4">
-          {sideSlides.map((banner) => (
-            <Link
+          {sideSlides.map((banner, index) => (
+            <motion.div
               key={banner._id}
-              href={banner.link}
-              className="relative flex-1 h-[150px] sm:h-[200px] lg:h-[242px] rounded-2xl overflow-hidden group"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.2 + 0.3, duration: 0.5 }}
+              whileHover={{ scale: 1.02 }}
+              className="flex-1"
             >
-              {/* Side Banner Image */}
-              <Image
-                src={banner.image}
-                alt={banner.alt}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                sizes="(max-width: 768px) 50vw, 33vw"
-              />
-              {/* Hover effect */}
-              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Link>
+              <Link
+                href={banner.link}
+                className="relative block h-[150px] sm:h-[200px] lg:h-[242px] rounded-2xl overflow-hidden group"
+              >
+                {/* Side Banner Image */}
+                <Image
+                  src={banner.image}
+                  alt={banner.alt}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+                {/* Hover effect */}
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>

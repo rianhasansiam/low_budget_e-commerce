@@ -2,42 +2,52 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { useFeaturedProducts } from "@/lib/redux/hooks";
+import { useProducts } from "@/lib/redux/hooks";
 
-export default function FeaturedProducts() {
-  const { products, loading } = useFeaturedProducts();
+export default function AllProductsSection() {
+  const { products, loading } = useProducts();
 
-  // Get only first 8 featured products
+  // Get products that are not featured (or just get all and slice)
   const displayProducts = products.slice(0, 8);
 
   return (
-    <section className="py-10 bg-white">
+    <section className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4"
         >
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Featured Products
-            </h2>
-            <p className="text-gray-600 mt-1">
-              Handpicked products just for you
-            </p>
+          <div className="flex items-center gap-3">
+           
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Our Products
+              </h2>
+              <p className="text-gray-600 mt-1">
+                Explore our complete collection
+              </p>
+            </div>
           </div>
-          <motion.div whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
+        
+
+
+
+            <motion.div whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
             <Link
-              href="/allProducts?filter=featured"
+              href="/allProducts"
               className="text-black font-semibold hover:underline hidden sm:block"
             >
               View All →
             </Link>
           </motion.div>
+         
+
         </motion.div>
 
         {/* Products Grid */}
@@ -65,13 +75,18 @@ export default function FeaturedProducts() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-gray-500">No featured products available</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-16"
+          >
+            <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
+            <p className="text-gray-500">No products available</p>
+          </motion.div>
         )}
 
-        {/* Mobile View All Link */}
-        <motion.div 
+        {/* Mobile View All Button */}
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -80,10 +95,11 @@ export default function FeaturedProducts() {
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
-              href="/allProducts?filter=featured"
-              className="inline-block bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors"
+              href="/allProducts"
+              className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors"
             >
               View All Products
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </motion.div>
         </motion.div>

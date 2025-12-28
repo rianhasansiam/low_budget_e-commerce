@@ -3,6 +3,7 @@
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Loader2, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import Link from 'next/link'
 
@@ -103,11 +104,26 @@ export default function LoginClient() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
-      <div className="container mx-auto px-4 max-w-md">
-        <div className="bg-white rounded-2xl p-8 shadow-lg">
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="container mx-auto px-4 max-w-md"
+      >
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+          className="bg-white rounded-2xl p-8 shadow-lg"
+        >
           {/* Logo/Brand */}
           <div className="text-center mb-6">
-            <div className="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            >
               <svg 
                 className="w-7 h-7 text-white" 
                 fill="none" 
@@ -127,23 +143,45 @@ export default function LoginClient() {
                   d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" 
                 />
               </svg>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-500 mt-1 text-sm">Sign in to continue to your account</p>
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-2xl font-bold text-gray-900"
+            >
+              Welcome Back
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-500 mt-1 text-sm"
+            >
+              Sign in to continue to your account
+            </motion.p>
           </div>
 
           {/* Success Message */}
           {successMessage && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm"
+            >
               {successMessage}
-            </div>
+            </motion.div>
           )}
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           {/* Login Form */}
@@ -258,18 +296,23 @@ export default function LoginClient() {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Back to Home */}
-        <div className="text-center mt-6">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center mt-6"
+        >
           <Link 
             href="/" 
             className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
           >
             ← Back to Home
           </Link>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   )
 }
