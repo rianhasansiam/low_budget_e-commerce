@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
-          image: user.picture,
+          image: user.image,
           role: user.role
         }
       }
@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
             await usersCollection.insertOne({
               name: user.name,
               email: user.email,
-              picture: user.image,
+              image: user.image,
               password: null,
               provider: 'google',
               role: 'user',
@@ -72,13 +72,13 @@ export const authOptions: NextAuthOptions = {
               updatedAt: new Date(),
             })
           } else {
-            // Update last login and picture if changed
+            // Update last login and image if changed
             await usersCollection.updateOne(
               { email: user.email },
               { 
                 $set: { 
                   updatedAt: new Date(),
-                  picture: user.image || existingUser.picture
+                  image: user.image || existingUser.image
                 } 
               }
             )
@@ -103,7 +103,7 @@ export const authOptions: NextAuthOptions = {
             token.email = dbUser.email
             token.name = dbUser.name
             token.role = dbUser.role || 'user'
-            token.picture = dbUser.picture
+            token.image = dbUser.image
           }
         } catch (error) {
           console.error('JWT callback error:', error)
@@ -113,7 +113,7 @@ export const authOptions: NextAuthOptions = {
       // Handle session update (when update() is called from client)
       if (trigger === 'update' && updateSession) {
         if (updateSession.name) token.name = updateSession.name
-        if (updateSession.image) token.picture = updateSession.image
+        if (updateSession.image) token.image = updateSession.image
       }
       
       return token
@@ -128,10 +128,9 @@ export const authOptions: NextAuthOptions = {
           if (dbUser && session.user) {
             session.user.name = dbUser.name
             session.user.email = dbUser.email
-            session.user.image = dbUser.picture
+            session.user.image = dbUser.image
             ;(session.user as { id?: string }).id = dbUser._id.toString()
             ;(session.user as { role?: string }).role = dbUser.role || 'user'
-            ;(session.user as { picture?: string }).picture = dbUser.picture
           }
         } catch (error) {
           console.error('Session callback error:', error)
@@ -139,7 +138,7 @@ export const authOptions: NextAuthOptions = {
           if (session.user) {
             ;(session.user as { id?: string }).id = token.id as string
             ;(session.user as { role?: string }).role = token.role as string
-            ;(session.user as { picture?: string }).picture = token.picture as string
+            session.user.image = token.image as string
           }
         }
       }

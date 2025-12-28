@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const usersCollection = await getCollection('users')
     const users = await usersCollection
-      .find({}, { projection: { password: 0 } }) // Exclude password
+      .find({})
       .sort({ createdAt: -1 })
       .toArray()
 
@@ -25,7 +25,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, password, provider = 'credentials', picture = null } = body
+    const { name, email, password, provider = 'credentials', image = null } = body
 
     // Validation
     if (!name || !name.trim()) {
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password: hashedPassword,
-      picture: picture,
+      image: image,
       role: 'user',
       provider: provider,
       createdAt: new Date(),

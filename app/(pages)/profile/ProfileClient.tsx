@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { 
   User, 
   Mail, 
@@ -22,9 +22,6 @@ import {
   CheckCircle2,
   Sparkles,
   Clock,
-  Bell,
-  Lock,
-  Globe,
   ShoppingCart
 } from 'lucide-react'
 import Swal from 'sweetalert2'
@@ -43,6 +40,7 @@ interface UserData {
   name: string
   email: string
   picture: string | null
+  image?: string | null
   role: string
   provider: string
   createdAt: string
@@ -57,15 +55,13 @@ export default function ProfileClient() {
   // Get real data from Redux
   const { totalItems: cartCount } = useAppSelector((state) => state.cart)
   const { totalItems: wishlistCount } = useAppSelector((state) => state.wishlist)
-  const ordersState = useAppSelector((state) => state.orders)
-  const orderCount = ordersState?.items?.length || 0
   
   const [userData, setUserData] = useState<UserData | null>(null)
+  const [userOrders, setUserOrders] = useState<number>(0)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'preferences'>('profile')
   
   const [editForm, setEditForm] = useState({
     name: '',
@@ -73,18 +69,30 @@ export default function ProfileClient() {
 
   const user = session?.user as SessionUser | undefined
 
-  // Fetch user data from database
+  // Fetch user data and orders from database
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user?.id) return
       
       try {
+        // Fetch user data
         const response = await fetch(`/api/users/${user.id}`)
         if (response.ok) {
           const result = await response.json()
-          const data = result.data || result // Handle both { data: user } and direct user object
+          const data = result.data || result
           setUserData(data)
           setEditForm({ name: data.name })
+          
+          // Fetch user's orders count by email
+          if (data.email) {
+            const ordersResponse = await fetch(`/api/orders?email=${encodeURIComponent(data.email)}`)
+            if (ordersResponse.ok) {
+              const ordersData = await ordersResponse.json()
+              if (ordersData.success) {
+                setUserOrders(ordersData.data?.length || 0)
+              }
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching user data:', error)
@@ -134,14 +142,16 @@ export default function ProfileClient() {
 
       const imageUrl = imgbbData.data.url
 
+      // Update user in database with new image
       const response = await fetch(`/api/users/${user?.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ picture: imageUrl })
+        body: JSON.stringify({ image: imageUrl })
       })
 
       if (response.ok) {
-        const updatedUser = await response.json()
+        const result = await response.json()
+        const updatedUser = result.data || result
         setUserData(updatedUser)
         await update({ image: imageUrl })
         
@@ -252,24 +262,10 @@ export default function ProfileClient() {
     return null
   }
 
-  // Real stats from Redux
-  const userStats = [
-    { label: 'Orders', value: orderCount.toString(), icon: Package, color: 'bg-blue-500' },
-    { label: 'Wishlist', value: wishlistCount.toString(), icon: Heart, color: 'bg-pink-500' },
-    { label: 'Cart Items', value: cartCount.toString(), icon: ShoppingCart, color: 'bg-green-500' },
-  ]
-
   const quickActions = [
-    { label: 'My Orders', icon: Package, href: '/orders', color: 'from-blue-500 to-blue-600', count: orderCount.toString() },
+    { label: 'My Orders', icon: Package, href: '/orders', color: 'from-blue-500 to-blue-600', count: userOrders.toString() },
     { label: 'Wishlist', icon: Heart, href: '/wilishlist', color: 'from-pink-500 to-rose-600', count: wishlistCount.toString() },
     { label: 'My Cart', icon: ShoppingCart, href: '/addToCart', color: 'from-emerald-500 to-green-600', count: cartCount.toString() },
-    { label: 'Notifications', icon: Bell, href: '#', color: 'from-amber-500 to-orange-600', count: '0' },
-  ]
-
-  const settingsTabs = [
-    { id: 'profile' as const, label: 'Profile', icon: User },
-    { id: 'security' as const, label: 'Security', icon: Lock },
-    { id: 'preferences' as const, label: 'Preferences', icon: Globe },
   ]
 
   return (
@@ -283,7 +279,7 @@ export default function ProfileClient() {
           }} />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-32">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24">
           {/* Greeting & Logout */}
           <div className="flex items-center justify-between mb-8">
             <motion.div
@@ -321,9 +317,9 @@ export default function ProfileClient() {
             <div className="relative group">
               <div className="relative w-28 h-28 sm:w-32 sm:h-32">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse opacity-75 blur-md" />
-                {userData?.picture || user?.image ? (
+                {(userData?.picture || userData?.image || user?.image) ? (
                   <Image
-                    src={userData?.picture || user?.image || ''}
+                    src={userData?.picture || userData?.image || user?.image || ''}
                     alt={userData?.name || 'Profile'}
                     fill
                     className="rounded-full object-cover border-4 border-white shadow-2xl relative z-10"
@@ -388,34 +384,9 @@ export default function ProfileClient() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12">
-        {/* Stats Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-3 gap-4 mb-8"
-        >
-          {userStats.map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + index * 0.1 }}
-                className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg shadow-gray-200/50 border border-gray-100"
-              >
-                <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.color} rounded-xl flex items-center justify-center mb-3`}>
-                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <p className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-gray-500 text-sm">{stat.label}</p>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8  pb-12">
+       
+       
         {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -423,7 +394,7 @@ export default function ProfileClient() {
           transition={{ delay: 0.3 }}
           className="mb-8"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-5">Quick Actions</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {quickActions.map((action, index) => {
               const Icon = action.icon
@@ -459,49 +430,14 @@ export default function ProfileClient() {
           transition={{ delay: 0.4 }}
           className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden"
         >
-          {/* Tabs */}
-          <div className="flex border-b border-gray-100">
-            {settingsTabs.map((tab) => {
-              const Icon = tab.icon
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-medium transition-all relative ${
-                    activeTab === tab.id
-                      ? 'text-gray-900'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"
-                    />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Tab Content */}
-          <AnimatePresence mode="wait">
-            {activeTab === 'profile' && (
-              <motion.div
-                key="profile"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                className="p-6 sm:p-8"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900">Profile Information</h3>
-                    <p className="text-gray-500 text-sm">Update your personal details</p>
-                  </div>
-                  {!isEditing ? (
+          {/* Profile Content */}
+          <div className="p-6 sm:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Profile Information</h3>
+                <p className="text-gray-500 text-sm">Update your personal details</p>
+              </div>
+              {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
                       className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
@@ -629,173 +565,7 @@ export default function ProfileClient() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'security' && (
-              <motion.div
-                key="security"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                className="p-6 sm:p-8"
-              >
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900">Security Settings</h3>
-                  <p className="text-gray-500 text-sm">Manage your account security</p>
-                </div>
-
-                <div className="space-y-4">
-                  {/* Password */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                        <Lock className="w-5 h-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">Password</p>
-                        <p className="text-sm text-gray-500">Last changed 30 days ago</p>
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white rounded-lg transition-colors">
-                      Change
-                    </button>
-                  </div>
-
-                  {/* Two-Factor */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                        <Shield className="w-5 h-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">Two-Factor Authentication</p>
-                        <p className="text-sm text-gray-500">Add an extra layer of security</p>
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors">
-                      Enable
-                    </button>
-                  </div>
-
-                  {/* Sessions */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                        <Globe className="w-5 h-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">Active Sessions</p>
-                        <p className="text-sm text-gray-500">Manage your active sessions</p>
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white rounded-lg transition-colors">
-                      View All
-                    </button>
-                  </div>
-                </div>
-
-                {/* Danger Zone */}
-                <div className="mt-8 p-4 border-2 border-red-200 rounded-xl bg-red-50">
-                  <h4 className="font-semibold text-red-700 mb-2">Danger Zone</h4>
-                  <p className="text-sm text-red-600 mb-4">
-                    Once you delete your account, there is no going back. Please be certain.
-                  </p>
-                  <button
-                    onClick={() => {
-                      Swal.fire({
-                        title: 'Delete Account?',
-                        text: 'This action cannot be undone. All your data will be permanently deleted.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#dc2626',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Yes, delete my account'
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          Swal.fire('Info', 'Account deletion is not implemented yet.', 'info')
-                        }
-                      })
-                    }}
-                    className="px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-100 transition-colors"
-                  >
-                    Delete Account
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'preferences' && (
-              <motion.div
-                key="preferences"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                className="p-6 sm:p-8"
-              >
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900">Preferences</h3>
-                  <p className="text-gray-500 text-sm">Customize your experience</p>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Email Notifications */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Email Notifications</p>
-                      <p className="text-sm text-gray-500">Receive emails about your account activity</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
-                    </label>
-                  </div>
-
-                  {/* Order Updates */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Order Updates</p>
-                      <p className="text-sm text-gray-500">Get notified about your order status</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
-                    </label>
-                  </div>
-
-                  {/* Promotional Emails */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Promotional Emails</p>
-                      <p className="text-sm text-gray-500">Receive emails about deals and offers</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
-                    </label>
-                  </div>
-
-                  {/* Newsletter */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Newsletter</p>
-                      <p className="text-sm text-gray-500">Weekly digest of new products and trends</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" defaultChecked />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <button className="px-6 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors">
-                    Save Preferences
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
         </motion.div>
       </div>
     </div>

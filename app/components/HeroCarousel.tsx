@@ -3,63 +3,106 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
-// Demo slider data with Unsplash images
-const sliderData = [
+interface HeroSlide {
+  _id: string;
+  image: string;
+  link: string;
+  alt: string;
+  type: "main" | "side";
+  order: number;
+  active: boolean;
+}
+
+// Fallback demo data if API fails
+const fallbackMainSlides = [
   {
-    id: 1,
+    _id: "1",
     image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=600&fit=crop",
-    link: "/allProducts?sale=winter",
+    link: "/allProducts",
     alt: "Winter Sale Banner - Electronics Deals",
+    type: "main" as const,
+    order: 1,
+    active: true,
   },
   {
-    id: 2,
+    _id: "2",
     image: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1200&h=600&fit=crop",
-    link: "/allProducts?filter=new",
+    link: "/allProducts",
     alt: "New Arrivals - Latest Gadgets",
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=600&fit=crop",
-    link: "/allProducts?category=smart-home",
-    alt: "Smart Home Devices",
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&h=600&fit=crop",
-    link: "/allProducts?category=audio",
-    alt: "Audio Festival - Headphones & Speakers",
+    type: "main" as const,
+    order: 2,
+    active: true,
   },
 ];
 
-// Side banners data with Unsplash images
-const sideBanners = [
+const fallbackSideSlides = [
   {
-    id: 1,
+    _id: "3",
     image: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=600&h=500&fit=crop",
-    link: "/productDetails?id=airpods-pro",
+    link: "/allProducts",
     alt: "AirPods Pro - Wireless Earbuds",
+    type: "side" as const,
+    order: 1,
+    active: true,
   },
   {
-    id: 2,
+    _id: "4",
     image: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=600&h=500&fit=crop",
-    link: "/productDetails?id=watch-series",
+    link: "/allProducts",
     alt: "Smart Watch Collection",
+    type: "side" as const,
+    order: 2,
+    active: true,
   },
 ];
 
 export default function HeroCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [mainSlides, setMainSlides] = useState<HeroSlide[]>([]);
+  const [sideSlides, setSideSlides] = useState<HeroSlide[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch slides from API
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await fetch("/api/hero-slides");
+        const data = await response.json();
+        
+        if (data.success && data.data.length > 0) {
+          const main = data.data.filter((s: HeroSlide) => s.type === "main" && s.active);
+          const side = data.data.filter((s: HeroSlide) => s.type === "side" && s.active);
+          
+          setMainSlides(main.length > 0 ? main : fallbackMainSlides);
+          setSideSlides(side.length > 0 ? side : fallbackSideSlides);
+        } else {
+          // Use fallback data
+          setMainSlides(fallbackMainSlides);
+          setSideSlides(fallbackSideSlides);
+        }
+      } catch (error) {
+        console.error("Error fetching hero slides:", error);
+        // Use fallback data on error
+        setMainSlides(fallbackMainSlides);
+        setSideSlides(fallbackSideSlides);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlides();
+  }, []);
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % sliderData.length);
-  }, []);
+    setCurrentSlide((prev) => (prev + 1) % (mainSlides.length || 1));
+  }, [mainSlides.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + sliderData.length) % sliderData.length);
-  }, []);
+    setCurrentSlide((prev) => (prev - 1 + (mainSlides.length || 1)) % (mainSlides.length || 1));
+  }, [mainSlides.length]);
 
   const goToSlide = useCallback((index: number) => {
     setCurrentSlide(index);
@@ -67,14 +110,31 @@ export default function HeroCarousel() {
 
   // Auto-play functionality
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || mainSlides.length === 0) return;
 
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+  }, [isAutoPlaying, nextSlide, mainSlides.length]);
+
+  // Show loading skeleton
+  if (loading) {
+    return (
+      <section className="py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="w-full lg:w-2/3 h-[300px] sm:h-[400px] lg:h-[500px] rounded-2xl bg-gray-200 animate-pulse flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+          </div>
+          <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4">
+            <div className="flex-1 h-[150px] sm:h-[200px] lg:h-[242px] rounded-2xl bg-gray-200 animate-pulse" />
+            <div className="flex-1 h-[150px] sm:h-[200px] lg:h-[242px] rounded-2xl bg-gray-200 animate-pulse" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -86,9 +146,9 @@ export default function HeroCarousel() {
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
           {/* Slides */}
-          {sliderData.map((slide, index) => (
+          {mainSlides.map((slide, index) => (
             <Link
-              key={slide.id}
+              key={slide._id}
               href={slide.link}
               className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                 index === currentSlide
@@ -134,7 +194,7 @@ export default function HeroCarousel() {
 
           {/* Dots Indicator */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-            {sliderData.map((_, index) => (
+            {mainSlides.map((_, index) => (
               <button
                 key={index}
                 onClick={(e) => {
@@ -154,9 +214,9 @@ export default function HeroCarousel() {
 
         {/* Side Banners */}
         <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4">
-          {sideBanners.map((banner) => (
+          {sideSlides.map((banner) => (
             <Link
-              key={banner.id}
+              key={banner._id}
               href={banner.link}
               className="relative flex-1 h-[150px] sm:h-[200px] lg:h-[242px] rounded-2xl overflow-hidden group"
             >

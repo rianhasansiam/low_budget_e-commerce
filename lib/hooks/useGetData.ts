@@ -1,7 +1,10 @@
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { getCacheConfig } from "@/lib/cache/cacheConfig";
 
-// Fetch all data from an endpoint
+// Fetch all data from an endpoint with smart caching
 export function useGetData<T>(key: string, endpoint: string) {
+  const cacheConfig = getCacheConfig(key);
+  
   return useQuery<T>({
     queryKey: [key],
     queryFn: async () => {
@@ -9,11 +12,15 @@ export function useGetData<T>(key: string, endpoint: string) {
       if (!res.ok) throw new Error("Failed to fetch");
       return res.json();
     },
+    staleTime: cacheConfig.staleTime,
+    gcTime: cacheConfig.gcTime,
   });
 }
 
-// Fetch single item by ID
+// Fetch single item by ID with caching
 export function useGetDataById<T>(key: string, endpoint: string, id: string | null) {
+  const cacheConfig = getCacheConfig(key);
+  
   return useQuery<T>({
     queryKey: [key, id],
     queryFn: async () => {
@@ -22,6 +29,8 @@ export function useGetDataById<T>(key: string, endpoint: string, id: string | nu
       return res.json();
     },
     enabled: !!id,
+    staleTime: cacheConfig.staleTime,
+    gcTime: cacheConfig.gcTime,
   });
 }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { LayoutDashboard, Package, ShoppingCart, Users, Tag, Percent, LogOut, Loader2, ShieldX } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Users, Tag, Percent, LogOut, Loader2, ShieldX, Settings as SettingsIcon } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -11,8 +11,9 @@ import Orders from './components/Orders'
 import Customer from './components/Customer'
 import Categories from './components/Categories'
 import Coupon from './components/Coupon'
+import Settings from './components/Settings'
 
-type TabType = 'dashboard' | 'products' | 'orders' | 'customers' | 'categories' | 'coupons'
+type TabType = 'dashboard' | 'products' | 'orders' | 'customers' | 'categories' | 'coupons' | 'settings'
 
 interface SessionUser {
   name?: string | null;
@@ -27,7 +28,8 @@ const menuItems = [
   { id: 'orders' as TabType, label: 'Orders', icon: ShoppingCart },
   { id: 'customers' as TabType, label: 'Customers', icon: Users },
   { id: 'categories' as TabType, label: 'Categories', icon: Tag },
-  { id: 'coupons' as TabType, label: 'Coupons', icon: Percent }
+  { id: 'coupons' as TabType, label: 'Coupons', icon: Percent },
+  { id: 'settings' as TabType, label: 'Settings', icon: SettingsIcon }
 ]
 
 export default function AdminPage() {
@@ -206,6 +208,7 @@ export default function AdminPage() {
           {activeTab === 'customers' && <Customer />}
           {activeTab === 'categories' && <Categories />}
           {activeTab === 'coupons' && <Coupon />}
+          {activeTab === 'settings' && <Settings />}
         </div>
       </main>
     </div>

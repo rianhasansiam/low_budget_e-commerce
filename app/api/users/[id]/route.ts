@@ -52,7 +52,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, picture, role, password } = body
+    const { name, image, role, password } = body
 
     const usersCollection = await getCollection('users')
 
@@ -62,7 +62,7 @@ export async function PUT(
     }
 
     if (name !== undefined) updateData.name = name.trim()
-    if (picture !== undefined) updateData.picture = picture
+    if (image !== undefined) updateData.image = image
     if (role !== undefined) updateData.role = role
 
     // Hash new password if provided

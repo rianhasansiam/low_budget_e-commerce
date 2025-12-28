@@ -34,10 +34,35 @@ export default function CartPage() {
   const [couponDiscount, setCouponDiscount] = useState(0)
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
   const [couponError, setCouponError] = useState('')
+  
+  // Shipping settings from admin
+  const [shippingSettings, setShippingSettings] = useState({
+    standardFee: 100,
+    freeShippingThreshold: 5000,
+    enableFreeShipping: true
+  })
 
-  // Calculate values
+  // Fetch shipping settings
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings')
+        const data = await response.json()
+        if (data.success && data.data?.shipping) {
+          setShippingSettings(data.data.shipping)
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error)
+      }
+    }
+    fetchSettings()
+  }, [])
+
+  // Calculate values with dynamic shipping
   const subtotal = totalPrice
-  const shipping = subtotal > 100 ? 0 : 9.99
+  const shipping = shippingSettings.enableFreeShipping && subtotal >= shippingSettings.freeShippingThreshold 
+    ? 0 
+    : shippingSettings.standardFee
   const discount = couponApplied ? (subtotal * couponDiscount) / 100 : 0
   const total = subtotal + shipping - discount
 
@@ -183,7 +208,7 @@ export default function CartPage() {
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16">
               {[
-                { icon: Truck, title: 'Free Shipping', desc: 'On orders over $100' },
+                { icon: Truck, title: 'Free Shipping', desc: 'On eligible orders' },
                 { icon: Shield, title: 'Secure Payment', desc: '100% secure checkout' },
                 { icon: Gift, title: 'Special Offers', desc: 'Exclusive discounts' },
               ].map((feature, index) => {
@@ -419,12 +444,13 @@ export default function CartPage() {
               </div>
 
               {/* Checkout Button */}
-              <button
+              <Link
+                href="/checkout"
                 className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium text-lg"
               >
                 <CreditCard className="w-5 h-5" />
                 Proceed to Checkout
-              </button>
+              </Link>
 
               {/* Trust Badges */}
               <div className="mt-6 pt-6 border-t border-gray-100">
@@ -442,18 +468,18 @@ export default function CartPage() {
               </div>
 
               {/* Free Shipping Progress */}
-              {subtotal < 100 && (
+              {shippingSettings.enableFreeShipping && subtotal < shippingSettings.freeShippingThreshold && (
                 <div className="mt-6 p-4 bg-blue-50 rounded-xl">
                   <div className="flex items-center gap-2 text-blue-700 mb-2">
                     <Truck className="w-4 h-4" />
                     <span className="text-sm font-medium">
-                      Add ${(100 - subtotal).toFixed(2)} more for FREE shipping!
+                      Add ৳{(shippingSettings.freeShippingThreshold - subtotal).toLocaleString('en-BD')} more for FREE shipping!
                     </span>
                   </div>
                   <div className="w-full h-2 bg-blue-100 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-blue-500 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min((subtotal / 100) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((subtotal / shippingSettings.freeShippingThreshold) * 100, 100)}%` }}
                     />
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingCart, Check } from "lucide-react";
@@ -33,9 +34,21 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
-  const isInWishlist = wishlistItems.some(item => item.id === product._id);
   
-  const discount = product.originalPrice
+  // Use ref for mount tracking to avoid hydration issues without extra renders
+  const hasMountedRef = useRef(false);
+  
+  useEffect(() => {
+    hasMountedRef.current = true;
+  }, []);
+  
+  // Check wishlist - will show correct state after first interaction
+  const isInWishlist = useMemo(() => {
+    return wishlistItems.some(item => item.id === product._id);
+  }, [wishlistItems, product._id]);
+  
+  // Calculate discount with null safety
+  const discount = (product.originalPrice && product.price && product.originalPrice > product.price)
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
@@ -43,7 +56,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     
-    if (product.stock === 0) {
+    if (!product.stock || product.stock === 0) {
       Swal.fire({
         icon: 'error',
         title: 'Out of Stock',
@@ -105,7 +118,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
-        <Link href={`/productDetails?id=${product._id}`}>
+        <Link href={`/productDetails/${product._id}`}>
           <Image
             src={product.image}
             alt={product.name}
@@ -136,16 +149,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
           <button
             onClick={handleAddToCart}
-            disabled={product.stock === 0}
+            disabled={!product.stock || product.stock === 0}
             className={`flex-1 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${
-              product.stock === 0 
+              !product.stock || product.stock === 0 
                 ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
                 : 'bg-black text-white hover:bg-gray-800'
             }`}
             aria-label="Add to cart"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span className="text-sm">{product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
+            <span className="text-sm">{!product.stock || product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
           </button>
           <button
             onClick={handleToggleWishlist}
@@ -163,7 +176,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Product Info */}
       <div className="p-4">
-        <Link href={`/productDetails?id=${product._id}`}>
+        <Link href={`/productDetails/${product._id}`}>
           <p className="text-xs text-gray-500 mb-1">{product.category}</p>
           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-black transition-colors">
             {product.name}
@@ -175,9 +188,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price */}
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-gray-900">
-            ৳{product.price.toLocaleString()}
+            ৳{(product.price ?? 0).toLocaleString()}
           </span>
-          {product.originalPrice && (
+          {product.originalPrice && product.originalPrice > product.price && (
             <span className="text-sm text-gray-400 line-through">
               ৳{product.originalPrice.toLocaleString()}
             </span>
