@@ -30,8 +30,13 @@ if (process.env.NODE_ENV === "development") {
   };
 
   if (!globalWithMongo._mongoClientPromise) {
+
+
+
     client = new MongoClient(uri, options);
     globalWithMongo._mongoClientPromise = client.connect();
+
+    
   }
   clientPromise = globalWithMongo._mongoClientPromise;
 } else {
