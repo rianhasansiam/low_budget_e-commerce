@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 // Demo social media data
 const socialsData = [
@@ -92,14 +93,7 @@ const footerLinksData = [
   },
 ];
 
-// Demo payment badges data
-const paymentBadgesData = [
-  { id: 1, srcUrl: '/payments/visa.svg', name: 'Visa' },
-  { id: 2, srcUrl: '/payments/mastercard.svg', name: 'Mastercard' },
-  { id: 3, srcUrl: '/payments/paypal.svg', name: 'PayPal' },
-  { id: 4, srcUrl: '/payments/applepay.svg', name: 'Apple Pay' },
-  { id: 5, srcUrl: '/payments/googlepay.svg', name: 'Google Pay' },
-];
+
 
 // Helper function for conditional classes
 const cn = (classes: (string | boolean | undefined)[]) => {
@@ -191,7 +185,14 @@ const Footer = () => {
               <Link href="/" className="mb-6 flex items-center" aria-label="Low Budget E-Commerce - Home">
                 {/* Using placeholder for logo - replace with actual logo */}
                 <div className="w-16 h-14 bg-white rounded-lg flex items-center justify-center mr-2" aria-hidden="true">
-                  <span className="text-black font-bold text-xl">LB</span>
+                  <Image
+                                  src="/logo.PNG"
+                                  alt="Store Logo"
+                                  width={50}
+                                  height={50}
+                                  className="rounded-xl"
+                                  priority
+                                />
                 </div>
                 <span className="text-lg lg:text-2xl font-bold text-white">
                   Low Budget
@@ -254,22 +255,7 @@ const Footer = () => {
               {', '}
               All rights reserved.
             </p>
-            <div className="flex items-center">
-              {paymentBadgesData.map((badge, _, arr) => (
-                <span
-                  key={badge.id}
-                  className={cn([
-                    arr.length !== badge.id && 'mr-3',
-                    'w-[46px] h-[30px] rounded-[5px] border border-[#D6DCE5] bg-white flex items-center justify-center',
-                  ])}
-                >
-                  {/* Placeholder for payment icons - replace with actual images */}
-                  <span className="text-[10px] font-medium text-gray-600">
-                    {badge.name.slice(0, 4)}
-                  </span>
-                </span>
-              ))}
-            </div>
+         
           </div>
         </div>
         <LayoutSpacing />
