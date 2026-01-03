@@ -243,17 +243,17 @@ export default function CartPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Shopping Cart</h1>
+            <p className="text-gray-500 text-sm sm:text-base mt-0.5 sm:mt-1">
               {totalItems} {totalItems === 1 ? 'item' : 'items'} in your cart
             </p>
           </div>
           <button
             onClick={handleClearCart}
-            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors self-start sm:self-auto"
           >
             <Trash2 className="w-4 h-4" />
             Clear Cart
@@ -275,11 +275,11 @@ export default function CartPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex gap-4 sm:gap-6">
+                  <div className="flex gap-3 sm:gap-6">
                     {/* Product Image */}
-                    <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0">
+                    <div className="relative w-20 h-20 sm:w-32 sm:h-32 flex-shrink-0">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -297,44 +297,44 @@ export default function CartPage() {
                     {/* Product Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-semibold text-gray-900 text-lg truncate">{item.name}</h3>
-                          <p className="text-gray-500 text-sm mt-1">SKU: {item.id.slice(-8).toUpperCase()}</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-gray-900 text-sm sm:text-lg line-clamp-2 sm:truncate">{item.name}</h3>
+                          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 sm:mt-1">SKU: {item.id.slice(-8).toUpperCase()}</p>
                         </div>
                         <button
                           onClick={() => handleRemoveItem(item.id)}
-                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
                         >
-                          <X className="w-5 h-5" />
+                          <X className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                       </div>
 
-                      <div className="flex items-end justify-between mt-4">
+                      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mt-3 sm:mt-4">
                         {/* Quantity Controls */}
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm text-gray-500">Qty:</span>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <span className="text-xs sm:text-sm text-gray-500">Qty:</span>
                           <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                             <button
                               onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                              className="p-2 hover:bg-gray-100 transition-colors"
+                              className="p-1.5 sm:p-2 hover:bg-gray-100 transition-colors"
                             >
-                              <Minus className="w-4 h-4" />
+                              <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             </button>
-                            <span className="w-12 text-center font-medium">{item.quantity}</span>
+                            <span className="w-8 sm:w-12 text-center text-sm sm:text-base font-medium">{item.quantity}</span>
                             <button
                               onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                              className="p-2 hover:bg-gray-100 transition-colors"
+                              className="p-1.5 sm:p-2 hover:bg-gray-100 transition-colors"
                             >
-                              <Plus className="w-4 h-4" />
+                              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             </button>
                           </div>
                         </div>
 
                         {/* Price */}
-                        <div className="text-right">
-                          <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
-                          <p className="text-xl font-bold text-gray-900">
-                            ${(item.price * item.quantity).toFixed(2)}
+                        <div className="text-left sm:text-right">
+                          <p className="text-xs sm:text-sm text-gray-500">৳{item.price.toLocaleString()} each</p>
+                          <p className="text-base sm:text-xl font-bold text-gray-900">
+                            ৳{(item.price * item.quantity).toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -360,12 +360,12 @@ export default function CartPage() {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-1"
           >
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 sticky top-20 sm:top-24">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Order Summary</h2>
 
               {/* Coupon Code */}
-              <div className="mb-6">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Promo Code</label>
+              <div className="mb-4 sm:mb-6">
+                <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2 block">Promo Code</label>
                 {couponApplied ? (
                   <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-xl">
                     <div className="flex items-center gap-2">
@@ -417,38 +417,38 @@ export default function CartPage() {
               </div>
 
               {/* Price Breakdown */}
-              <div className="space-y-3 border-t border-gray-100 pt-4">
-                <div className="flex justify-between text-gray-600">
+              <div className="space-y-2 sm:space-y-3 border-t border-gray-100 pt-3 sm:pt-4">
+                <div className="flex justify-between text-sm sm:text-base text-gray-600">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>৳{subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-sm sm:text-base text-gray-600">
                   <span className="flex items-center gap-1">
                     Shipping
                     {shipping === 0 && (
-                      <span className="text-xs text-green-600 font-medium">(Free)</span>
+                      <span className="text-[10px] sm:text-xs text-green-600 font-medium">(Free)</span>
                     )}
                   </span>
-                  <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  <span>{shipping === 0 ? 'FREE' : `৳${shipping.toLocaleString()}`}</span>
                 </div>
                 {couponApplied && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-sm sm:text-base text-green-600">
                     <span>Discount ({couponDiscount}%)</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-৳{discount.toLocaleString()}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-lg font-bold text-gray-900 border-t border-gray-100 pt-3">
+                <div className="flex justify-between text-base sm:text-lg font-bold text-gray-900 border-t border-gray-100 pt-2 sm:pt-3">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>৳{total.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Checkout Button */}
               <Link
                 href="/checkout"
-                className="w-full mt-6 flex items-center justify-center gap-2 px-6 py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium text-lg"
+                className="w-full mt-4 sm:mt-6 flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium text-base sm:text-lg"
               >
-                <CreditCard className="w-5 h-5" />
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                 Proceed to Checkout
               </Link>
 
@@ -463,11 +463,11 @@ export default function CartPage() {
 
               {/* Free Shipping Progress */}
               {shippingSettings.enableFreeShipping && subtotal < shippingSettings.freeShippingThreshold && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-xl">
+                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 rounded-xl">
                   <div className="flex items-center gap-2 text-blue-700 mb-2">
-                    <Truck className="w-4 h-4" />
-                    <span className="text-sm font-medium">
-                      Add ৳{(shippingSettings.freeShippingThreshold - subtotal).toLocaleString('en-BD')} more for FREE shipping!
+                    <Truck className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium">
+                      Add ৳{(shippingSettings.freeShippingThreshold - subtotal).toLocaleString()} more for FREE shipping!
                     </span>
                   </div>
                   <div className="w-full h-2 bg-blue-100 rounded-full overflow-hidden">

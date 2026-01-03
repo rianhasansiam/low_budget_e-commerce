@@ -121,11 +121,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      whileHover={{ y: -8, transition: { duration: 0.2 } }}
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100"
     >
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Link href={`/productDetails/${product._id}`}>
           <Image
             src={product.image}
@@ -136,74 +136,71 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
         </Link>
 
-        {/* Badge */}
+        {/* Badge - Top Left */}
         {product.badge && (
-          <span
-            className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold text-white rounded-full ${"bg-black"
-            }`}
-          >
+          <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold text-white rounded-full bg-black">
             {product.badge}
           </span>
         )}
 
-        {/* Discount Badge */}
+        {/* Discount Badge - Bottom Left */}
         {discount > 0 && (
-          <span className="absolute top-3 right-3 px-2 py-1 text-xs font-bold bg-red-400 text-black rounded-full">
+          <span className="absolute bottom-2 left-2 px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">
             -{discount}%
           </span>
         )}
 
-        {/* Quick Actions */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-          <button
-            onClick={handleAddToCart}
-            disabled={!product.stock || product.stock === 0}
-            className={`flex-1 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors ${
-              !product.stock || product.stock === 0 
-                ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                : 'bg-black text-white hover:bg-gray-800'
+        {/* Wishlist Button - Top Right, Always visible */}
+        <button
+          onClick={handleToggleWishlist}
+          className={`absolute top-2 right-2 p-1.5 rounded-full shadow-md z-10 transition-all duration-200
+            ${isInWishlist 
+              ? 'bg-red-500 text-white' 
+              : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:text-red-500'
             }`}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            <span className="text-sm">{!product.stock || product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
-          </button>
-          <button
-            onClick={handleToggleWishlist}
-            className={`p-2.5 rounded-xl shadow-md transition-colors ${
-              isInWishlist 
-                ? 'bg-red-500 text-white hover:bg-red-600' 
-                : 'bg-white hover:bg-red-50 hover:text-red-500'
-            }`}
-            aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-          >
-            {isInWishlist ? <Check className="w-5 h-5" /> : <Heart className="w-5 h-5" />}
-          </button>
-        </div>
+          aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+        >
+          {isInWishlist ? <Check className="w-4 h-4" /> : <Heart className="w-4 h-4" />}
+        </button>
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-2.5">
         <Link href={`/productDetails/${product._id}`}>
-          <p className="text-xs text-gray-500 mb-1">{product.category}</p>
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-black transition-colors">
+          <p className="text-[10px] text-gray-500 mb-0.5 truncate">{product.category}</p>
+          <h3 className="font-medium text-gray-900 mb-1.5 text-xs leading-tight line-clamp-2 group-hover:text-black transition-colors">
             {product.name}
           </h3>
         </Link>
 
-        
-
         {/* Price */}
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-gray-900">
+        <div className="flex items-center gap-1.5 flex-wrap mb-2">
+          <span className="text-sm font-bold text-gray-900">
             ৳{(product.price ?? 0).toLocaleString()}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (
-            <span className="text-sm text-gray-400 line-through">
+            <span className="text-[10px] text-gray-400 line-through">
               ৳{product.originalPrice.toLocaleString()}
             </span>
           )}
         </div>
+
+        {/* Add to Cart Button - Always visible */}
+        <button
+          onClick={handleAddToCart}
+          disabled={!product.stock || product.stock === 0}
+          className={`w-full py-2 rounded-lg font-medium text-xs transition-colors ${
+            !product.stock || product.stock === 0 
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+              : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900'
+          }`}
+          aria-label="Add to cart"
+        >
+          <span className="flex items-center justify-center gap-1.5">
+            <ShoppingCart className="w-3.5 h-3.5" />
+            {!product.stock || product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+          </span>
+        </button>
       </div>
     </motion.div>
   );

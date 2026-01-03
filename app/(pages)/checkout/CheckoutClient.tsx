@@ -174,20 +174,18 @@ export default function CheckoutClient() {
     
     if (!shippingForm.firstName.trim()) errors.firstName = 'First name is required'
     if (!shippingForm.lastName.trim()) errors.lastName = 'Last name is required'
-    if (!shippingForm.email.trim()) {
-      errors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shippingForm.email)) {
-      errors.email = 'Invalid email format'
-    }
     if (!shippingForm.phone.trim()) {
       errors.phone = 'Phone number is required'
     } else if (!/^01[3-9]\d{8}$/.test(shippingForm.phone.replace(/\D/g, ''))) {
       errors.phone = 'Invalid Bangladesh phone number'
     }
-    if (!shippingForm.address.trim()) errors.address = 'Address is required'
+    if (!shippingForm.state.trim()) errors.state = 'Division is required'
     if (!shippingForm.city.trim()) errors.city = 'City is required'
-    if (!shippingForm.state.trim()) errors.state = 'State/Division is required'
-    if (!shippingForm.zip.trim()) errors.zip = 'ZIP code is required'
+    if (!shippingForm.address.trim()) errors.address = 'Street address is required'
+    // Email validation only if provided
+    if (shippingForm.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shippingForm.email)) {
+      errors.email = 'Invalid email format'
+    }
     
     setFormErrors(errors)
     return Object.keys(errors).length === 0
@@ -413,7 +411,7 @@ export default function CheckoutClient() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="flex flex-col-reverse lg:grid lg:grid-cols-3 gap-6 lg:gap-8">
           
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -481,29 +479,6 @@ export default function CheckoutClient() {
                       )}
                     </div>
 
-                    {/* Email */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Email <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="email"
-                          name="email"
-                          value={shippingForm.email}
-                          onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 ${
-                            formErrors.email ? 'border-red-500' : 'border-gray-200'
-                          }`}
-                          placeholder="john@example.com"
-                        />
-                      </div>
-                      {formErrors.email && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
-                      )}
-                    </div>
-
                     {/* Phone */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -524,49 +499,6 @@ export default function CheckoutClient() {
                       </div>
                       {formErrors.phone && (
                         <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
-                      )}
-                    </div>
-
-                    {/* Address */}
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Street Address <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <Building className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                        <textarea
-                          name="address"
-                          value={shippingForm.address}
-                          onChange={handleInputChange}
-                          rows={2}
-                          className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 resize-none ${
-                            formErrors.address ? 'border-red-500' : 'border-gray-200'
-                          }`}
-                          placeholder="House #, Road #, Area"
-                        />
-                      </div>
-                      {formErrors.address && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
-                      )}
-                    </div>
-
-                    {/* City */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        City <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={shippingForm.city}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 ${
-                          formErrors.city ? 'border-red-500' : 'border-gray-200'
-                        }`}
-                        placeholder="Dhaka"
-                      />
-                      {formErrors.city && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.city}</p>
                       )}
                     </div>
 
@@ -593,30 +525,81 @@ export default function CheckoutClient() {
                       )}
                     </div>
 
-                    {/* ZIP */}
+                    {/* City */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        ZIP Code <span className="text-red-500">*</span>
+                        City <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
-                        name="zip"
-                        value={shippingForm.zip}
+                        name="city"
+                        value={shippingForm.city}
                         onChange={handleInputChange}
                         className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 ${
-                          formErrors.zip ? 'border-red-500' : 'border-gray-200'
+                          formErrors.city ? 'border-red-500' : 'border-gray-200'
                         }`}
-                        placeholder="1000"
+                        placeholder="Dhaka"
                       />
-                      {formErrors.zip && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.zip}</p>
+                      {formErrors.city && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.city}</p>
                       )}
                     </div>
 
-                    {/* Country */}
+                    {/* Street Address */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Street Address <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <Building className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                        <textarea
+                          name="address"
+                          value={shippingForm.address}
+                          onChange={handleInputChange}
+                          rows={2}
+                          className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 resize-none ${
+                            formErrors.address ? 'border-red-500' : 'border-gray-200'
+                          }`}
+                          placeholder="House #, Road #, Area"
+                        />
+                      </div>
+                      {formErrors.address && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.address}</p>
+                      )}
+                    </div>
+
+                    {/* Divider for optional fields */}
+                    <div className="md:col-span-2 border-t border-gray-100 pt-4 mt-2">
+                      <p className="text-sm text-gray-500 mb-4">Optional Information</p>
+                    </div>
+
+                    {/* Email - Optional */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Country
+                        Email <span className="text-gray-400">(Optional)</span>
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="email"
+                          name="email"
+                          value={shippingForm.email}
+                          onChange={handleInputChange}
+                          className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 ${
+                            formErrors.email ? 'border-red-500' : 'border-gray-200'
+                          }`}
+                          placeholder="john@example.com"
+                        />
+                      </div>
+                      {formErrors.email && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                      )}
+                    </div>
+
+                    {/* Country - Optional */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Country <span className="text-gray-400">(Optional)</span>
                       </label>
                       <input
                         type="text"
@@ -627,7 +610,7 @@ export default function CheckoutClient() {
                       />
                     </div>
 
-                    {/* Order Notes */}
+                    {/* Order Notes - Optional */}
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Order Notes <span className="text-gray-400">(Optional)</span>
@@ -681,7 +664,7 @@ export default function CheckoutClient() {
                   </div>
                   <div className="pl-13 text-sm text-gray-600">
                     <p>{shippingForm.address}</p>
-                    <p>{shippingForm.city}, {shippingForm.state} {shippingForm.zip}</p>
+                    <p>{shippingForm.city}, {shippingForm.state}</p>
                     <p>{shippingForm.phone}</p>
                   </div>
                 </div>
@@ -937,6 +920,8 @@ export default function CheckoutClient() {
               </div>
             </div>
           </div>
+
+
         </div>
       </div>
     </div>
