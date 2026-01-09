@@ -29,6 +29,11 @@ export interface Order {
   shipping_address: ShippingAddress;
   items: OrderItem[];
   payment_method: string;
+  subtotal?: number;
+  shipping_cost?: number;
+  discount?: number;
+  coupon_code?: string | null;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
