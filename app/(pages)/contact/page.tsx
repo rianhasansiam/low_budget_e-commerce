@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import HeroSection from "./components/HeroSection";
 import ContactInfoCards from "./components/ContactInfoCards";
 import ContactForm from "./components/ContactForm";
-import MapSection from "./components/MapSection";
 import FAQSection from "./components/FAQSection";
 
 // SEO Metadata
@@ -31,13 +30,10 @@ export default function ContactPage() {
       <HeroSection />
       <ContactInfoCards />
       
-      {/* Contact Form & Map Section */}
+      {/* Contact Form Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <ContactForm />
-            <MapSection />
-          </div>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ContactForm />
         </div>
       </section>
 

@@ -132,7 +132,7 @@ export default function ContactForm() {
               id="firstName"
               name="firstName"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
-              placeholder="John"
+              placeholder="Rian Hasan"
               required
               disabled={isSubmitting}
             />
@@ -154,7 +154,7 @@ export default function ContactForm() {
               id="lastName"
               name="lastName"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
-              placeholder="Doe"
+              placeholder="Siam"
               required
               disabled={isSubmitting}
             />
@@ -178,7 +178,7 @@ export default function ContactForm() {
             id="email"
             name="email"
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
-            placeholder="john@example.com"
+            placeholder="rian@gmail.com"
             required
             disabled={isSubmitting}
           />

@@ -12,7 +12,7 @@ export default function HeroSection() {
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-4xl md:text-5xl font-bold mb-4"
         >
-          Get In Touch
+          Quality Gadget. Smart Price 
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0, y: 30 }}

@@ -132,34 +132,43 @@ export default function CartPage() {
     setCouponError('')
 
     try {
-      // Simulate API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Mock coupon validation
-      if (couponCode.toUpperCase() === 'SAVE10') {
-        setCouponApplied(true)
-        setCouponDiscount(10)
-        Swal.fire({
-          icon: 'success',
-          title: 'Coupon Applied!',
-          text: 'You saved 10% on your order',
-          showConfirmButton: false,
-          timer: 1500
+      // Call actual API to validate coupon
+      const response = await fetch(`/api/coupons/${couponCode}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'validate',
+          cartTotal: subtotal
         })
-      } else if (couponCode.toUpperCase() === 'SAVE20') {
+      })
+      
+      const data = await response.json()
+      
+      if (data.success && data.data) {
+        const { coupon, discount } = data.data
         setCouponApplied(true)
-        setCouponDiscount(20)
+        
+        // Calculate discount percentage for display
+        const discountPercentage = coupon.discountType === 'percentage' 
+          ? coupon.discountValue 
+          : Math.round((discount / subtotal) * 100)
+        
+        setCouponDiscount(discountPercentage)
+        
         Swal.fire({
           icon: 'success',
           title: 'Coupon Applied!',
-          text: 'You saved 20% on your order',
+          text: `You saved ${coupon.discountType === 'percentage' ? coupon.discountValue + '%' : '৳' + discount} on your order`,
           showConfirmButton: false,
           timer: 1500
         })
       } else {
-        setCouponError('Invalid coupon code')
+        setCouponError(data.error || 'Invalid coupon code')
       }
-    } catch {
+    } catch (error) {
+      console.error('Error applying coupon:', error)
       setCouponError('Failed to apply coupon')
     } finally {
       setIsApplyingCoupon(false)

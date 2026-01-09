@@ -212,42 +212,43 @@ export default function CheckoutClient() {
     setCouponError('')
 
     try {
-      const response = await fetch('/api/coupons')
+      // Call API to validate coupon
+      const response = await fetch(`/api/coupons/${couponCode}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'validate',
+          cartTotal: subtotal
+        })
+      })
+      
       const data = await response.json()
       
-      if (data.success) {
-        const coupon = data.data.find(
-          (c: CouponData & { isActive: boolean; expiryDate: string; usedCount: number; usageLimit: number }) => 
-            c.code === couponCode.toUpperCase() && 
-            c.isActive && 
-            new Date(c.expiryDate) > new Date() &&
-            c.usedCount < c.usageLimit
-        )
+      if (data.success && data.data) {
+        const { coupon, discount } = data.data
         
-        if (coupon) {
-          if (subtotal < coupon.minPurchase) {
-            setCouponError(`Minimum purchase of ৳${coupon.minPurchase.toLocaleString('en-BD')} required`)
-          } else {
-            setAppliedCoupon({
-              code: coupon.code,
-              discountType: coupon.discountType,
-              discountValue: coupon.discountValue,
-              minPurchase: coupon.minPurchase,
-              maxDiscount: coupon.maxDiscount
-            })
-            Swal.fire({
-              icon: 'success',
-              title: 'Coupon Applied!',
-              text: `You saved ৳${calculateDiscount().toLocaleString('en-BD')}`,
-              timer: 2000,
-              showConfirmButton: false
-            })
-          }
-        } else {
-          setCouponError('Invalid or expired coupon code')
-        }
+        setAppliedCoupon({
+          code: coupon.code,
+          discountType: coupon.discountType,
+          discountValue: coupon.discountValue,
+          minPurchase: coupon.minPurchase,
+          maxDiscount: coupon.maxDiscount
+        })
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Coupon Applied!',
+          text: `You saved ৳${discount.toLocaleString('en-BD')}`,
+          timer: 2000,
+          showConfirmButton: false
+        })
+      } else {
+        setCouponError(data.error || 'Invalid or expired coupon code')
       }
-    } catch {
+    } catch (error) {
+      console.error('Error applying coupon:', error)
       setCouponError('Failed to validate coupon')
     } finally {
       setIsApplyingCoupon(false)
@@ -284,6 +285,10 @@ export default function CheckoutClient() {
         text: 'Please agree to the terms and conditions to proceed.'
       })
       return
+    }
+
+    if (isCreatingOrder) {
+      return // Prevent multiple submissions
     }
 
     try {
@@ -338,12 +343,24 @@ export default function CheckoutClient() {
       // Redirect to orders page
       router.push('/orders')
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Order creation failed:', error)
+      
+      let errorMessage = 'Something went wrong. Please try again.';
+      
+      // Check for specific error types
+      if (error?.message?.includes('Failed to add')) {
+        errorMessage = 'Failed to process your order. Please check your connection and try again.';
+      } else if (error?.response?.status === 401) {
+        errorMessage = 'You must be logged in to place an order.';
+      } else if (error?.response?.status === 400) {
+        errorMessage = 'Invalid order data. Please check your information and try again.';
+      }
+      
       Swal.fire({
         icon: 'error',
         title: 'Order Failed',
-        text: 'Something went wrong. Please try again.'
+        text: errorMessage
       })
     }
   }

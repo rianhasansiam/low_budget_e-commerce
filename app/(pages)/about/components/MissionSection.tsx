@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const MissionSection = () => {
   const stats = [
-    { value: "50K+", label: "Happy Customers" },
+    { value: "4K+", label: "Happy Customers" },
     { value: "10K+", label: "Products" },
     { value: "99%", label: "Satisfaction Rate" },
     { value: "24/7", label: "Support" },
@@ -26,16 +26,13 @@ const MissionSection = () => {
               Our Mission
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-6">
-              Making Technology Accessible for Engineers & Tech Enthusiasts
+              Delivering Quality Tech & Gadget Products.
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">
-              At EngineersGadget, we&apos;re on a mission to democratize technology. 
-              We believe that every engineer, developer, and tech enthusiast deserves access to premium tech gadgets and engineering tools.
+             To supply 100% original and quality tech & gadget products across Bangladesh at the best possible price, while maintaining trust, transparency, and customer satisfaction.
             </p>
             <p className="text-gray-600 text-lg leading-relaxed">
-              Through strategic partnerships with manufacturers and efficient operations, 
-              we&apos;re able to offer products at prices that won&apos;t strain your wallet while 
-              maintaining the quality standards you deserve.
+              To become one of the most trusted gadget brands in Bangladesh, known for affordability, authenticity, and a positive customer experience nationwide.
             </p>
           </motion.div>
           

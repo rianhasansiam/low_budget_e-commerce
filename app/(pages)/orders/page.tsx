@@ -197,22 +197,22 @@ export default function OrdersPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center">
-              <Package className="w-6 h-6 text-white" />
+        <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0">
+              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">My Orders</h1>
-              <p className="text-gray-500">Track and manage your orders ({orders.length} total)</p>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Orders</h1>
+              <p className="text-sm sm:text-base text-gray-500 truncate">Track and manage your orders ({orders.length} total)</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
         {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
           {['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'].map((filter) => (
             <button
               key={filter}
@@ -252,33 +252,33 @@ export default function OrdersPage() {
                   className={`bg-white rounded-2xl shadow-sm border ${status.borderColor} overflow-hidden hover:shadow-md transition-shadow`}
                 >
                   {/* Order Header */}
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 ${status.bgColor} rounded-xl flex items-center justify-center`}>
-                          <StatusIcon className={`w-6 h-6 ${status.color}`} />
+                  <div className="p-4 sm:p-6 border-b border-gray-100">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 ${status.bgColor} rounded-lg sm:rounded-xl flex items-center justify-center shrink-0`}>
+                          <StatusIcon className={`w-5 h-5 sm:w-6 sm:h-6 ${status.color}`} />
                         </div>
-                        <div>
-                          <p className="font-semibold text-gray-900">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-900 text-sm sm:text-base">
                             Order #{order._id.slice(-8).toUpperCase()}
                           </p>
-                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 mt-1">
                             <span className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
+                              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                               {formatDate(order.order_date || order.createdAt)}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Banknote className="w-4 h-4" />
+                              <Banknote className="w-3 h-3 sm:w-4 sm:h-4" />
                               {order.payment_method}
                             </span>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${status.bgColor} ${status.color}`}>
+                        <span className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${status.bgColor} ${status.color} shrink-0`}>
                           {status.label}
                         </span>
-                        <span className="text-lg font-bold text-gray-900">
+                      </div>
+                      <div className="flex justify-end">
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           ৳{order.total_amount?.toLocaleString('en-BD') || '0'}
                         </span>
                       </div>
@@ -286,11 +286,11 @@ export default function OrdersPage() {
                   </div>
 
                   {/* Order Items */}
-                  <div className="p-6">
-                    <div className="flex flex-wrap gap-4 mb-4">
+                  <div className="p-4 sm:p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
                       {order.items?.slice(0, 4).map((item, index) => (
-                        <div key={index} className="flex items-center gap-3">
-                          <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden relative shrink-0">
+                        <div key={index} className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg overflow-hidden relative shrink-0">
                             {item.image ? (
                               <Image
                                 src={item.image}
@@ -320,10 +320,10 @@ export default function OrdersPage() {
                     </div>
 
                     {/* Shipping Address & Contact */}
-                    <div className="flex flex-col sm:flex-row gap-4 text-sm text-gray-500">
+                    <div className="flex flex-col gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
                       <div className="flex items-start gap-2">
                         <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                        <span>
+                        <span className="flex-1">
                           {order.shipping_address?.street}, {order.shipping_address?.city}, {order.shipping_address?.state} {order.shipping_address?.zip}
                         </span>
                       </div>
@@ -344,22 +344,22 @@ export default function OrdersPage() {
                   </div>
 
                   {/* Order Footer */}
-                  <div className="px-6 py-4 bg-gray-50 flex items-center justify-between">
-                    <div className="text-sm text-gray-500">
+                  <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                    <div className="text-xs sm:text-sm text-gray-500 flex flex-wrap gap-x-3 gap-y-1">
                       <span>{order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}</span>
                       {order.shipping_cost !== undefined && order.shipping_cost > 0 && (
-                        <span className="ml-3">• Shipping: ৳{order.shipping_cost.toLocaleString('en-BD')}</span>
+                        <span>• Shipping: ৳{order.shipping_cost.toLocaleString('en-BD')}</span>
                       )}
                       {order.discount !== undefined && order.discount > 0 && (
-                        <span className="ml-3 text-green-600">• Discount: -৳{order.discount.toLocaleString('en-BD')}</span>
+                        <span className="text-green-600">• Discount: -৳{order.discount.toLocaleString('en-BD')}</span>
                       )}
                     </div>
                     <Link 
                       href={`/orders/${order._id}`}
-                      className="flex items-center gap-1 text-sm font-medium text-gray-900 hover:text-orange-600 transition-colors"
+                      className="flex items-center gap-1 text-xs sm:text-sm font-medium text-gray-900 hover:text-orange-600 transition-colors self-end sm:self-auto"
                     >
                       View Details
-                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Link>
                   </div>
                 </div>

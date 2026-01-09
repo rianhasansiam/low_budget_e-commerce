@@ -27,7 +27,7 @@ const HeroSection = () => {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto text-gray-300 leading-relaxed"
         >
-          Your trusted destination for premium tech gadgets and engineering tools. We believe every engineer and tech enthusiast deserves access to great technology at the best prices.
+         Engineer’s Gadget is a trusted brand delivering quality and authentic Gadget products. offering<b> original, high-quality  gadget & tech </b> products at the best prices.
         </motion.p>
       </div>
       {/* Decorative elements */}

@@ -1,32 +1,33 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const team = [
   {
-    name: 'Sarah Johnson',
+    name: 'Md. Naimur Rahman',
     role: 'CEO & Founder',
-    image: '/team/sarah.jpg',
-    fallbackInitials: 'SJ',
+    image: '/Naim.jpeg',
+    fallbackInitials: 'NR',
   },
   {
-    name: 'Michael Chen',
-    role: 'Head of Operations',
-    image: '/team/michael.jpg',
-    fallbackInitials: 'MC',
+    name: 'Sabrina Binte Alam',
+    role: 'Operations Manager',
+    image: '/Sabrina.jpeg',
+    fallbackInitials: 'SBA',
   },
   {
-    name: 'Emily Rodriguez',
-    role: 'Customer Experience Lead',
-    image: '/team/emily.jpg',
-    fallbackInitials: 'ER',
+    name: 'Md. Asikuzzaman Anik',
+    role: 'Marketing Executive',
+    image: '/Anik.jpeg',
+    fallbackInitials: 'MA',
   },
   {
-    name: 'David Kim',
-    role: 'Tech Lead',
-    image: '/team/david.jpg',
-    fallbackInitials: 'DK',
+    name: 'Md. Mynul Kabir',
+    role: 'Customer Support Officer',
+    image: '/Mynul.jpeg',
+    fallbackInitials: 'MK',
   },
 ];
 
@@ -65,12 +66,15 @@ const TeamSection = () => {
               <motion.div 
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="relative mb-4 mx-auto w-32 h-32 lg:w-40 lg:h-40"
+                className="relative mb-4 mx-auto w-32 h-32 lg:w-40 lg:h-40 overflow-hidden rounded-full"
               >
-                {/* Fallback avatar with initials */}
-                <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-white text-2xl lg:text-3xl font-bold transition-transform duration-300">
-                  {member.fallbackInitials}
-                </div>
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 128px, 160px"
+                />
               </motion.div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">
                 {member.name}

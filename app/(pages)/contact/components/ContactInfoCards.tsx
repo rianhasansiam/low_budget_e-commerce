@@ -8,31 +8,31 @@ const contactInfo: {
   icon: LucideIcon;
   title: string;
   details: string;
-  subDetails: string;
+
 }[] = [
   {
     icon: Mail,
     title: "Email Us",
-    details: "support@engineersgadget.tech",
-    subDetails: "sales@engineersgadget.tech",
+    details: "engineersgadet25@gmail.com",
+   
   },
   {
     icon: Phone,
     title: "Call Us",
-    details: "+880 1234-567890",
-    subDetails: "+880 1234-567891",
+    details: "+880 1621420608",
+ 
   },
   {
     icon: MapPin,
     title: "Visit Us",
-    details: "123 Tech Street",
-    subDetails: "Dhaka, Bangladesh 1205",
+    details: "Daffodil International University Campus, Ashulia, Savar Dhaka, Bangladesh ",
+   
   },
   {
     icon: Clock,
     title: "Business Hours",
     details: "Mon - Fri: 9AM - 6PM",
-    subDetails: "Sat - Sun: 10AM - 4PM",
+   
   },
 ];
 
@@ -64,7 +64,7 @@ export default function ContactInfoCards() {
                 {info.title}
               </h3>
               <p className="text-gray-700">{info.details}</p>
-              <p className="text-gray-500 text-sm">{info.subDetails}</p>
+           
             </motion.div>
           ))}
         </div>

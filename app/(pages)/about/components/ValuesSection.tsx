@@ -11,7 +11,7 @@ const values = [
       </svg>
     ),
     title: 'Affordability',
-    description: 'We negotiate the best deals so you can enjoy quality products at the lowest prices possible.',
+    description: 'Best price across Bangladesh',
   },
   {
     icon: (
@@ -20,7 +20,7 @@ const values = [
       </svg>
     ),
     title: 'Quality Assurance',
-    description: 'Every product undergoes strict quality checks before reaching your doorstep.',
+    description: 'Original & quality tech products at the best prices.',
   },
   {
     icon: (
@@ -29,7 +29,7 @@ const values = [
       </svg>
     ),
     title: 'Fast Delivery',
-    description: 'Quick and reliable shipping to get your orders to you as fast as possible.',
+    description: 'Nationwide delivery across Bangladesh to get your orders to you as fast as possible.',
   },
   {
     icon: (
@@ -47,7 +47,7 @@ const values = [
       </svg>
     ),
     title: 'Easy Returns',
-    description: 'Hassle-free return policy because we want you to shop with confidence.',
+    description: 'Simple ordering process and hassle-free return policy because we want you to shop with confidence.',
   },
   {
     icon: (
@@ -56,7 +56,7 @@ const values = [
       </svg>
     ),
     title: 'Secure Shopping',
-    description: 'Your data and transactions are protected with industry-leading security.',
+    description: 'Trusted by real customers with secure payment options for a safe shopping experience.',
   },
 ];
 

@@ -276,19 +276,19 @@ const Orders = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Orders</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Orders</h2>
+          <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">
             Track and manage customer orders ({pagination?.total || 0} total)
           </p>
         </div>
         <button 
           onClick={handleExport}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm w-full sm:w-auto"
         >
-          <Download className="w-5 h-5" />
-          Export
+          <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>Export</span>
         </button>
       </div>
 
@@ -472,15 +472,15 @@ const Orders = () => {
 
       {/* Order Details Modal */}
       {isModalOpen && selectedOrder && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl sm:rounded-2xl max-w-2xl w-full my-4 max-h-[95vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100">
+              <div className="min-w-0 flex-1 mr-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                   Order #{selectedOrder._id.slice(-6).toUpperCase()}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   {formatDate(selectedOrder.order_date).date} at {formatDate(selectedOrder.order_date).time}
                 </p>
               </div>
@@ -493,61 +493,61 @@ const Orders = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Customer Info */}
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span className="text-orange-600 font-semibold">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
+                  <span className="text-orange-600 font-semibold text-sm sm:text-base">
                     {selectedOrder.customer_name.charAt(0)}
                   </span>
                 </div>
-                <div>
-                  <p className="font-medium text-gray-900">{selectedOrder.customer_name}</p>
-                  <p className="text-sm text-gray-500">{selectedOrder.email}</p>
-                  <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{selectedOrder.customer_name}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 truncate">{selectedOrder.email}</p>
+                  <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500 mt-1">
                     <Phone className="w-3 h-3" />
                     <span>{selectedOrder.phone || 'No phone'}</span>
                   </div>
                 </div>
-                <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(selectedOrder.status)}`}>
+                <span className={`px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-medium shrink-0 ${getStatusStyle(selectedOrder.status)}`}>
                   {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
                 </span>
               </div>
 
               {/* Order Items */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Package className="w-5 h-5 text-gray-600" />
-                  <h4 className="font-medium text-gray-900">Order Items</h4>
+              <div className="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                  <Package className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Order Items</h4>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {selectedOrder.items.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">{item.name}</p>
-                        <p className="text-sm text-gray-500">
+                    <div key={index} className="flex items-center justify-between bg-white p-2 sm:p-3 rounded-lg gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm sm:text-base line-clamp-1">{item.name}</p>
+                        <p className="text-xs sm:text-sm text-gray-500">
                           {formatCurrency(item.unit_price)} × {item.quantity}
                         </p>
                       </div>
-                      <p className="font-semibold text-gray-900">{formatCurrency(item.subtotal)}</p>
+                      <p className="font-semibold text-gray-900 text-sm sm:text-base shrink-0">{formatCurrency(item.subtotal)}</p>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
-                  <p className="font-medium text-gray-900">Total</p>
-                  <p className="text-lg font-bold text-orange-600">
+                <div className="flex items-center justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
+                  <p className="font-medium text-gray-900 text-sm sm:text-base">Total</p>
+                  <p className="text-base sm:text-lg font-bold text-orange-600">
                     {formatCurrency(selectedOrder.total_amount)}
                   </p>
                 </div>
               </div>
 
               {/* Shipping Address */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <MapPin className="w-5 h-5 text-gray-600" />
-                  <h4 className="font-medium text-gray-900">Shipping Address</h4>
+              <div className="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Shipping Address</h4>
                 </div>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                   {selectedOrder.shipping_address.street}<br />
                   {selectedOrder.shipping_address.city}, {selectedOrder.shipping_address.state} {selectedOrder.shipping_address.zip}<br />
                   {selectedOrder.shipping_address.country}
@@ -555,23 +555,38 @@ const Orders = () => {
               </div>
 
               {/* Payment Method */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <CreditCard className="w-5 h-5 text-gray-600" />
-                  <h4 className="font-medium text-gray-900">Payment Method</h4>
+              <div className="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">Payment Method</h4>
                 </div>
-                <p className="text-gray-600">{selectedOrder.payment_method}</p>
+                <p className="text-gray-600 text-xs sm:text-sm">{selectedOrder.payment_method}</p>
               </div>
 
+              {/* Customer Notes */}
+              {selectedOrder.notes && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                  <div className="flex items-start gap-2 mb-2">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                    </svg>
+                    <h4 className="font-medium text-gray-900 text-sm sm:text-base">Customer Notes</h4>
+                  </div>
+                  <p className="text-gray-700 text-xs sm:text-sm leading-relaxed sm:ml-7">
+                    {selectedOrder.notes}
+                  </p>
+                </div>
+              )}
+
               {/* Update Status */}
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-700">Update Status:</label>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <label className="text-xs sm:text-sm font-medium text-gray-700">Update Status:</label>
                 <select
                   value={selectedOrder.status}
                   onChange={(e) => {
                     handleStatusUpdate(selectedOrder._id, e.target.value)
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="flex-1 px-3 py-2 sm:px-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   {statusOptions.map(status => (
                     <option key={status} value={status}>

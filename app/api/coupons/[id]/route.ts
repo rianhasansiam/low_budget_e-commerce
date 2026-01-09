@@ -157,14 +157,21 @@ export async function PATCH(
     // If action is 'validate', validate the coupon code
     if (body.action === 'validate') {
       const collection = await getCollection("coupons");
-      const coupon = await collection.findOne({ code: id.toUpperCase() });
+      const couponCode = id.toUpperCase().trim();
+      
+      console.log('Validating coupon:', couponCode);
+      
+      const coupon = await collection.findOne({ code: couponCode });
 
       if (!coupon) {
+        console.log('Coupon not found in database');
         return NextResponse.json(
-          { success: false, error: "Invalid coupon code" },
+          { success: false, error: "Coupon code not found. Please check the code and try again." },
           { status: 404 }
         );
       }
+
+      console.log('Coupon found:', coupon);
 
       // Check if coupon is active
       if (!coupon.isActive) {

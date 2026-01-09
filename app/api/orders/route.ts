@@ -100,6 +100,10 @@ export async function POST(request: NextRequest) {
       phone: body.phone,
       order_date: body.order_date || new Date().toISOString(),
       status: body.status || "pending",
+      subtotal: body.subtotal || calculatedTotal,
+      shipping_cost: body.shipping_cost || 0,
+      discount: body.discount || 0,
+      coupon_code: body.coupon_code || null,
       total_amount: body.total_amount || calculatedTotal,
       shipping_address: {
         street: body.shipping_address.street,
@@ -114,20 +118,40 @@ export async function POST(request: NextRequest) {
         quantity: number;
         unit_price: number;
         subtotal?: number;
+        image?: string;
       }) => ({
         product_id: item.product_id,
         name: item.name,
         quantity: item.quantity,
         unit_price: item.unit_price,
         subtotal: item.subtotal || item.unit_price * item.quantity,
+        image: item.image || null,
       })),
       payment_method: body.payment_method || "Cash On Delivery",
+      notes: body.notes || "",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     const collection = await getCollection("orders");
     const result = await collection.insertOne(order);
+
+    // If coupon was used, increment usage count
+    if (body.coupon_code) {
+      try {
+        const couponsCollection = await getCollection("coupons");
+        await couponsCollection.updateOne(
+          { code: body.coupon_code.toUpperCase() },
+          { 
+            $inc: { usedCount: 1 },
+            $set: { updatedAt: new Date() }
+          }
+        );
+      } catch (couponError) {
+        console.error("Error updating coupon usage:", couponError);
+        // Don't fail the order if coupon update fails
+      }
+    }
 
     return NextResponse.json(
       {
