@@ -25,7 +25,7 @@ const contactInfo: {
   {
     icon: MapPin,
     title: "Visit Us",
-    details: "Daffodil International University Campus, Ashulia, Savar Dhaka, Bangladesh ",
+    details: "Daffodil International University Campus, Ashulia, Savar, Dhaka, Bangladesh",
    
   },
   {

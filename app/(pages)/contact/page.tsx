@@ -6,20 +6,21 @@ import FAQSection from "./components/FAQSection";
 
 // SEO Metadata
 export const metadata: Metadata = {
-  title: "Contact Us | EngineersGadget - Tech Gadgets Store",
+  title: "Contact Us | Engineers Gadget - Online Gadget Store in Bangladesh",
   description:
-    "Get in touch with EngineersGadget. We're here to help with your tech gadget and engineering tools needs. Contact us via email, phone, or visit our store.",
+    "Get in touch with Engineers Gadget. Contact us for quality tech gadgets and electronics. Email: engineersgadet25@gmail.com | Phone: +880 1621420608 | WhatsApp available. Located in Dhaka, Bangladesh.",
   keywords: [
-    "contact EngineersGadget",
-    "tech gadget store contact",
+    "contact Engineers Gadget",
+    "gadget store Bangladesh contact",
     "customer support",
+    "tech support Bangladesh",
     "electronics help",
-    "engineering tools support",
+    "WhatsApp support",
   ],
   openGraph: {
-    title: "Contact Us | EngineersGadget",
+    title: "Contact Us | Engineers Gadget",
     description:
-      "Have questions? We'd love to hear from you. Reach out to EngineersGadget for all your tech gadget and engineering needs.",
+      "Have questions? Contact Engineers Gadget for all your tech gadget needs in Bangladesh. Quality Gadget. Smart Price.",
     type: "website",
   },
 };

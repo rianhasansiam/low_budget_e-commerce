@@ -10,44 +10,43 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://engineersgadget.tec
 
 // SEO Metadata
 export const metadata: Metadata = {
-  title: "EngineersGadget | Premium Tech Gadgets & Electronics Store",
+  title: "Engineers Gadget | Quality Gadget. Smart Price - Online Store in Bangladesh",
   description:
-    "Discover premium tech gadgets, electronics, Arduino, Raspberry Pi, IoT devices, and engineering tools. Best prices, fast shipping, and expert support for engineers and tech enthusiasts.",
+    "Engineers Gadget - Your trusted online gadget and electronics store in Bangladesh. 100% original tech gadgets, smart devices, and electronic accessories with fast delivery nationwide. 25,000+ happy customers. 99% recommended reviews.",
   keywords: [
-    "tech gadgets",
-    "electronics store",
-    "Arduino",
-    "Raspberry Pi",
-    "IoT devices",
-    "engineering tools",
-    "microcontrollers",
-    "sensors",
-    "robotics",
-    "developer tools",
-    "electronic components",
-    "EngineersGadget",
+    "Engineers Gadget",
+    "gadget store Bangladesh",
+    "electronics online Bangladesh",
+    "tech gadgets Dhaka",
+    "smart devices Bangladesh",
+    "mobile accessories",
+    "computer accessories",
+    "original gadgets",
+    "online shopping Bangladesh",
+    "quality gadgets",
+    "budget-friendly tech",
   ],
   openGraph: {
-    title: "EngineersGadget | Premium Tech Gadgets & Electronics Store",
+    title: "Engineers Gadget | Quality Gadget. Smart Price",
     description:
-      "Discover premium tech gadgets, electronics, and engineering tools. Arduino, Raspberry Pi, IoT devices & more.",
+      "Your trusted online gadget store in Bangladesh. 100% original products, fast delivery, 25,000+ happy customers. Shop quality tech gadgets at the best prices.",
     type: "website",
     url: siteUrl,
-    siteName: "EngineersGadget",
+    siteName: "Engineers Gadget",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "EngineersGadget - Your Ultimate Tech & Engineering Store",
+        alt: "Engineers Gadget - Quality Gadget. Smart Price",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "EngineersGadget | Premium Tech Gadgets Store",
+    title: "Engineers Gadget | Quality Gadget. Smart Price",
     description:
-      "Discover premium tech gadgets, electronics, and engineering tools at the best prices.",
+      "Your trusted online gadget store in Bangladesh. 100% original products, fast delivery nationwide.",
     images: ["/og-image.jpg"],
   },
   alternates: {
@@ -65,12 +64,12 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            name: "EngineersGadget - Home",
-            description: "Premium Tech Gadgets, Electronics & Engineering Tools Store",
+            name: "Engineers Gadget - Home",
+            description: "Quality Gadget. Smart Price - Your trusted online gadget and electronics store in Bangladesh",
             url: siteUrl,
             isPartOf: {
               "@type": "WebSite",
-              name: "EngineersGadget",
+              name: "Engineers Gadget",
               url: siteUrl,
             },
             breadcrumb: {

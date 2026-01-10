@@ -25,9 +25,10 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto text-gray-300 leading-relaxed"
+          className="text-sm md:text-lg lg:text-xl max-w-3xl mx-auto text-gray-300 leading-relaxed"
         >
-         Engineer’s Gadget is a trusted brand delivering quality and authentic Gadget products. offering<b> original, high-quality  gadget & tech </b> products at the best prices.
+         Engineers Gadget is a trusted online gadget and electronics store in Bangladesh, offering the latest technology-driven products for modern users, tech enthusiasts, and professionals. We provide high-quality, original gadgets, smart devices, and electronic accessories—all in one convenient platform.
+
         </motion.p>
       </div>
       {/* Decorative elements */}

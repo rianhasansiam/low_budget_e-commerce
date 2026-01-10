@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 
 const MissionSection = () => {
   const stats = [
-    { value: "4K+", label: "Happy Customers" },
+    { value: "25K+", label: "Happy Customers" },
     { value: "10K+", label: "Products" },
-    { value: "99%", label: "Satisfaction Rate" },
+    { value: "99%", label: "Recommended Reviews" },
     { value: "24/7", label: "Support" },
   ];
 
@@ -23,17 +23,23 @@ const MissionSection = () => {
             transition={{ duration: 0.6 }}
           >
             <span className="text-black font-semibold text-sm uppercase tracking-wider">
-              Our Mission
+              Our Mission & Vision
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-6">
-              Delivering Quality Tech & Gadget Products.
+              Quality Gadget. Smart Price
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed mb-6">
-             To supply 100% original and quality tech & gadget products across Bangladesh at the best possible price, while maintaining trust, transparency, and customer satisfaction.
-            </p>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              To become one of the most trusted gadget brands in Bangladesh, known for affordability, authenticity, and a positive customer experience nationwide.
-            </p>
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">Our Mission</h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                To supply 100% original and quality tech & gadget products across Bangladesh at the best possible price, while maintaining trust, transparency, and customer satisfaction.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">Our Vision</h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                To become one of the most trusted gadget brands in Bangladesh, known for affordability, authenticity, and a positive customer experience nationwide.
+              </p>
+            </div>
           </motion.div>
           
           {/* Visual Element */}

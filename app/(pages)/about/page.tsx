@@ -7,32 +7,33 @@ import CTASection from './components/CTASection';
 
 // SEO Metadata
 export const metadata: Metadata = {
-  title: 'About Us | EngineersGadget - Premium Tech Gadgets & Engineering Tools',
+  title: 'About Us | Engineers Gadget - Trusted Online Gadget Store in Bangladesh',
   description:
-    'Learn about EngineersGadget - your trusted destination for premium tech gadgets, electronics, and engineering tools. Discover our mission, values, and the team behind your favorite tech store.',
+    'Learn about Engineers Gadget - your trusted online gadget and electronics store in Bangladesh. Discover our mission to provide 100% original quality tech products at the best prices with fast delivery across Bangladesh.',
   keywords: [
     'about us',
-    'tech gadgets store',
-    'electronics shop',
-    'engineering tools',
-    'Arduino',
-    'Raspberry Pi',
-    'IoT devices',
-    'EngineersGadget',
+    'Engineers Gadget',
+    'gadget store Bangladesh',
+    'electronics shop Bangladesh',
+    'tech gadgets',
+    'original gadgets',
+    'quality electronics',
+    'online shopping Bangladesh',
+    'trusted gadget store',
   ],
   openGraph: {
-    title: 'About Us | EngineersGadget',
+    title: 'About Us | Engineers Gadget',
     description:
-      'Your trusted destination for premium tech gadgets and engineering tools. Everyone deserves access to great technology.',
+      'Your trusted online gadget and electronics store in Bangladesh. Quality Gadget. Smart Price. Serving 25,000+ happy customers nationwide.',
     type: 'website',
     locale: 'en_US',
-    siteName: 'EngineersGadget',
+    siteName: 'Engineers Gadget',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Us | EngineersGadget',
+    title: 'About Us | Engineers Gadget',
     description:
-      'Your trusted destination for premium tech gadgets and engineering tools. Everyone deserves access to great technology.',
+      'Your trusted online gadget and electronics store in Bangladesh. Quality Gadget. Smart Price.',
   },
   robots: {
     index: true,
