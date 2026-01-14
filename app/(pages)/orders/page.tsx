@@ -354,13 +354,7 @@ export default function OrdersPage() {
                         <span className="text-green-600">• Discount: -৳{order.discount.toLocaleString('en-BD')}</span>
                       )}
                     </div>
-                    <Link 
-                      href={`/orders/${order._id}`}
-                      className="flex items-center gap-1 text-xs sm:text-sm font-medium text-gray-900 hover:text-orange-600 transition-colors self-end sm:self-auto"
-                    >
-                      View Details
-                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
-                    </Link>
+                   
                   </div>
                 </div>
               )

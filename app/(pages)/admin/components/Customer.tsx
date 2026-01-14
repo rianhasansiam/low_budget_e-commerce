@@ -133,10 +133,12 @@ const Customer = () => {
       setUserToDelete(null)
     } catch (error) {
       console.error('Error deleting user:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete user. Please try again.'
+      
       Swal.fire({
         icon: 'error',
         title: 'Delete Failed',
-        text: 'Failed to delete user. Please try again.',
+        text: errorMessage,
         confirmButtonColor: '#111827'
       })
     }

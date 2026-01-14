@@ -322,6 +322,7 @@ export default function ProfileClient() {
                     src={userData?.picture || userData?.image || user?.image || ''}
                     alt={userData?.name || 'Profile'}
                     fill
+                    sizes="(max-width: 640px) 112px, 128px"
                     className="rounded-full object-cover border-4 border-white shadow-2xl relative z-10"
                   />
                 ) : (

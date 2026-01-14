@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { 
   Settings as SettingsIcon, 
   Truck, 
-  Save, 
   Loader2,
   DollarSign,
   Package,
@@ -18,7 +17,9 @@ import {
   Link as LinkIcon,
   GripVertical,
   Eye,
-  EyeOff
+  EyeOff,
+  Percent,
+  Search
 } from 'lucide-react'
 import Swal from 'sweetalert2'
 
@@ -49,6 +50,17 @@ interface HeroSlide {
   active: boolean
 }
 
+interface Product {
+  _id: string
+  name: string
+  price: number
+  originalPrice: number
+  image: string
+  category: string
+  stock: number
+  specialDiscount?: boolean
+}
+
 export default function Settings() {
   const [settings, setSettings] = useState<SiteSettings | null>(null)
   const [loading, setLoading] = useState(true)
@@ -65,13 +77,74 @@ export default function Settings() {
     alt: '',
     type: 'main' as 'main' | 'side'
   })
+
+  // Special Discount Products State
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [productsLoading, setProductsLoading] = useState(true)
+  const [productSearch, setProductSearch] = useState('')
   const [uploadingImage, setUploadingImage] = useState(false)
+
+  // Auto-save debounce ref
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Fetch settings on mount
   useEffect(() => {
     fetchSettings()
     fetchHeroSlides()
+    fetchProducts()
   }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products?limit=100')
+      const data = await response.json()
+      if (Array.isArray(data)) {
+        // Only show products that have a discount (originalPrice > price)
+        const discountedProducts = data.filter((p: Product) => 
+          p.originalPrice && p.price && p.originalPrice > p.price
+        )
+        setAllProducts(discountedProducts)
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+    } finally {
+      setProductsLoading(false)
+    }
+  }
+
+  const handleToggleSpecialDiscount = async (product: Product) => {
+    try {
+      const response = await fetch(`/api/products/${product._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ specialDiscount: !product.specialDiscount })
+      })
+      const data = await response.json()
+      if (data.success) {
+        setAllProducts(prev => prev.map(p => 
+          p._id === product._id ? { ...p, specialDiscount: !p.specialDiscount } : p
+        ))
+        Swal.fire({
+          icon: 'success',
+          title: product.specialDiscount ? 'Removed from Special Discounts' : 'Added to Special Discounts',
+          timer: 1500,
+          showConfirmButton: false
+        })
+      }
+    } catch (error) {
+      console.error('Error updating product:', error)
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update product' })
+    }
+  }
+
+  // Filter products by search
+  const filteredProducts = allProducts.filter(p => 
+    p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+    p.category.toLowerCase().includes(productSearch.toLowerCase())
+  )
+
+  // Get special discount products
+  const specialDiscountProducts = allProducts.filter(p => p.specialDiscount)
 
   const fetchSettings = async () => {
     try {
@@ -92,51 +165,52 @@ export default function Settings() {
     }
   }
 
-  const handleSave = async () => {
-    if (!settings) return
-
+  // Auto-save function
+  const autoSaveSettings = useCallback(async (settingsToSave: SiteSettings) => {
     setSaving(true)
     try {
       const response = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
+        body: JSON.stringify(settingsToSave)
       })
       
       const data = await response.json()
       
-      if (data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Settings Saved!',
-          text: 'Your settings have been updated successfully.',
-          timer: 2000,
-          showConfirmButton: false
-        })
-      } else {
-        throw new Error(data.error)
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to update settings')
       }
     } catch (error) {
       console.error('Error saving settings:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Failed to save settings'
+        text: error instanceof Error ? error.message : 'Failed to save settings'
       })
     } finally {
       setSaving(false)
     }
-  }
+  }, [])
 
   const updateShipping = (field: keyof ShippingSettings, value: number | boolean) => {
     if (!settings) return
-    setSettings({
+    
+    const newSettings = {
       ...settings,
       shipping: {
         ...settings.shipping,
         [field]: value
       }
-    })
+    }
+    setSettings(newSettings)
+    
+    // Debounced auto-save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      autoSaveSettings(newSettings)
+    }, 500) // Save after 500ms of no changes
   }
 
   // Hero Slides Functions
@@ -164,7 +238,7 @@ export default function Settings() {
       formData.append('image', file)
       
       const response = await fetch(
-        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEBB_API_KEY}`,
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
         { method: 'POST', body: formData }
       )
       
@@ -315,23 +389,12 @@ export default function Settings() {
             <p className="text-sm text-gray-500">Manage your store settings</p>
           </div>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
-        >
-          {saving ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4" />
-              Save Changes
-            </>
-          )}
-        </button>
+        {saving && (
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Saving...
+          </div>
+        )}
       </div>
 
       {/* Shipping Settings */}
@@ -504,6 +567,7 @@ export default function Settings() {
                             src={slide.image}
                             alt={slide.alt}
                             fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             className="object-cover"
                           />
                           {!slide.active && (
@@ -546,66 +610,104 @@ export default function Settings() {
               {/* Side Banner Slides */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-medium text-gray-900">Side Banners</h4>
-                  <button
-                    onClick={() => openAddSlideModal('side')}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-sm hover:bg-orange-200 transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Banner
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <Percent className="w-5 h-5 text-orange-500" />
+                    <h4 className="font-medium text-gray-900">Special Discount Products</h4>
+                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                      {specialDiscountProducts.length} selected
+                    </span>
+                  </div>
                 </div>
                 
-                {sideSlides.length === 0 ? (
+                <p className="text-sm text-gray-500 mb-4">
+                  Select discounted products to feature in the Special Discounts section on the homepage.
+                </p>
+
+                {/* Search */}
+                <div className="relative mb-4">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                  />
+                </div>
+
+                {/* Selected Products */}
+                {specialDiscountProducts.length > 0 && (
+                  <div className="mb-4">
+                    <h5 className="text-xs font-medium text-gray-500 uppercase mb-2">Currently Featured</h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {specialDiscountProducts.map((product) => {
+                        const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+                        return (
+                          <div key={product._id} className="relative bg-orange-50 border-2 border-orange-200 rounded-xl p-2">
+                            <div className="relative h-16 rounded-lg overflow-hidden mb-2">
+                              <Image src={product.image} alt={product.name} fill sizes="100px" className="object-cover" />
+                              <div className="absolute top-1 left-1 bg-red-500 text-white text-[10px] font-bold px-1 py-0.5 rounded">
+                                -{discount}%
+                              </div>
+                            </div>
+                            <p className="text-xs font-medium text-gray-900 line-clamp-1">{product.name}</p>
+                            <p className="text-xs text-orange-600 font-bold">৳{product.price.toLocaleString()}</p>
+                            <button
+                              onClick={() => handleToggleSpecialDiscount(product)}
+                              className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full shadow hover:bg-red-600"
+                              title="Remove from special discounts"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Available Products */}
+                {productsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                  </div>
+                ) : filteredProducts.length === 0 ? (
                   <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                    <ImageIcon className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                    <p className="text-gray-500 text-sm">No side banners yet</p>
+                    <Percent className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">No discounted products found</p>
+                    <p className="text-gray-400 text-xs mt-1">Products need to have original price higher than sale price</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {sideSlides.map((slide) => (
-                      <div key={slide._id} className="relative group rounded-xl overflow-hidden border border-gray-200">
-                        <div className="relative h-40">
-                          <Image
-                            src={slide.image}
-                            alt={slide.alt}
-                            fill
-                            className="object-cover"
-                          />
-                          {!slide.active && (
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                              <span className="text-white text-sm font-medium">Inactive</span>
+                  <>
+                    <h5 className="text-xs font-medium text-gray-500 uppercase mb-2">Available Discounted Products</h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto pr-2">
+                      {filteredProducts.filter(p => !p.specialDiscount).map((product) => {
+                        const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+                        return (
+                          <div 
+                            key={product._id} 
+                            className="flex items-center gap-3 p-2 border border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-colors cursor-pointer"
+                            onClick={() => handleToggleSpecialDiscount(product)}
+                          >
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                              <Image src={product.image} alt={product.name} fill sizes="48px" className="object-cover" />
+                              <div className="absolute top-0 left-0 bg-red-500 text-white text-[8px] font-bold px-1 rounded-br">
+                                -{discount}%
+                              </div>
                             </div>
-                          )}
-                        </div>
-                        <div className="p-3 bg-white">
-                          <p className="text-xs text-gray-500 truncate">{slide.alt || 'No description'}</p>
-                          <p className="text-xs text-blue-600 truncate">{slide.link}</p>
-                        </div>
-                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => handleToggleSlideActive(slide)}
-                            className="p-1.5 bg-white rounded-lg shadow hover:bg-gray-100"
-                            title={slide.active ? 'Hide' : 'Show'}
-                          >
-                            {slide.active ? <Eye className="w-4 h-4 text-green-600" /> : <EyeOff className="w-4 h-4 text-gray-400" />}
-                          </button>
-                          <button
-                            onClick={() => openEditSlideModal(slide)}
-                            className="p-1.5 bg-white rounded-lg shadow hover:bg-gray-100"
-                          >
-                            <Edit2 className="w-4 h-4 text-blue-600" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteSlide(slide._id)}
-                            className="p-1.5 bg-white rounded-lg shadow hover:bg-gray-100"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-600" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-gray-900 line-clamp-1">{product.name}</p>
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs font-bold text-orange-600">৳{product.price.toLocaleString()}</span>
+                                <span className="text-[10px] text-gray-400 line-through">৳{product.originalPrice.toLocaleString()}</span>
+                              </div>
+                            </div>
+                            <Plus className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </>
                 )}
               </div>
             </>
@@ -632,7 +734,7 @@ export default function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
                 {slideForm.image ? (
                   <div className="relative h-40 rounded-xl overflow-hidden border border-gray-200">
-                    <Image src={slideForm.image} alt="Preview" fill className="object-cover" />
+                    <Image src={slideForm.image} alt="Preview" fill sizes="400px" className="object-cover" />
                     <button
                       onClick={() => setSlideForm(prev => ({ ...prev, image: '' }))}
                       className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg"

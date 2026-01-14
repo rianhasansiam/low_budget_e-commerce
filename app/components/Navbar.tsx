@@ -357,6 +357,7 @@ export default function Navbar() {
                               src={product.image}
                               alt={product.name}
                               fill
+                              sizes="48px"
                               className="object-cover rounded-lg"
                             />
                           </div>
@@ -655,6 +656,7 @@ export default function Navbar() {
                               src={product.image}
                               alt={product.name}
                               fill
+                              sizes="56px"
                               className="object-cover rounded-lg"
                             />
                           </div>

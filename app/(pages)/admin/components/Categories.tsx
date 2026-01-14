@@ -67,7 +67,7 @@ const Categories = () => {
     setIsUploading(true)
     
     try {
-      const apiKey = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY
       if (!apiKey) {
         throw new Error('ImgBB API key not configured')
       }
@@ -422,6 +422,7 @@ const Categories = () => {
                       src={formData.image}
                       alt="Category preview"
                       fill
+                      sizes="300px"
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

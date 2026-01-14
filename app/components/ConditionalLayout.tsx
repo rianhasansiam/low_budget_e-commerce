@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import SocialFloatingButton from './SocialFloatingButton'
 
 export default function ConditionalLayout({
   children,
@@ -19,6 +20,7 @@ export default function ConditionalLayout({
       <Navbar />
       {children}
       {!isAdminPage && <Footer />}
+      {!isAdminPage && <SocialFloatingButton />}
     </>
   )
 }

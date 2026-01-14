@@ -8,7 +8,19 @@ export function useDeleteData<T extends { _id?: string }>(key: string, endpoint:
       const res = await fetch(`${endpoint}/${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete");
+      
+      if (!res.ok) {
+        // Try to get error message from response
+        let errorMessage = `Failed to delete: ${res.status} ${res.statusText}`;
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          // If response is not JSON, use default error message
+        }
+        throw new Error(errorMessage);
+      }
+      
       return res.json();
     },
     // Optimistic delete - remove from cache immediately
@@ -36,12 +48,17 @@ export function useDeleteData<T extends { _id?: string }>(key: string, endpoint:
 
       return { previousData };
     },
-    onError: (_err, _id, context) => {
+    onError: (_err, id, context) => {
       if (context?.previousData) {
         queryClient.setQueryData([key], context.previousData);
       }
     },
+    onSuccess: () => {
+      // Invalidate all related queries to ensure UI updates
+      queryClient.invalidateQueries({ queryKey: [key] });
+    },
     onSettled: () => {
+      // Final invalidation to ensure cache is fresh
       queryClient.invalidateQueries({ queryKey: [key] });
     },
   });
