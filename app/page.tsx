@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import HeroCarousel from "./components/HeroCarousel";
-
 import FeaturedProducts from "./components/FeaturedProducts";
 import AllProductsSection from "./components/AllProductsSection";
 import CustomerSatisfaction from "./components/CustomerSatisfaction";
@@ -87,7 +86,6 @@ export default function Home() {
         }}
       />
       <HeroCarousel />
-     
       <CategoriesSection />
       <FeaturedProducts />
       <CustomerSatisfaction />

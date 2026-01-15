@@ -55,9 +55,7 @@ export default function Navbar() {
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const mobileSearchRef = useRef<HTMLDivElement>(null);
 
   // Get categories from Redux store
   const { categories } = useCategories();
@@ -121,9 +119,6 @@ export default function Navbar() {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setIsSearchFocused(false);
       }
-      if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)) {
-        setShowMobileSearch(false);
-      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -137,7 +132,6 @@ export default function Navbar() {
       router.push(`/allProducts?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setIsSearchFocused(false);
-      setShowMobileSearch(false);
     }
   };
 
@@ -145,7 +139,6 @@ export default function Navbar() {
   const handleProductClick = () => {
     setSearchQuery("");
     setIsSearchFocused(false);
-    setShowMobileSearch(false);
   };
 
   // Handle scroll effect
@@ -330,7 +323,7 @@ export default function Navbar() {
               </div>
             </form>
 
-            {/* Search Results Dropdown */}
+            {/* Desktop Search Results Dropdown */}
             <AnimatePresence>
               {isSearchFocused && searchQuery.length >= 2 && (
                 <motion.div
@@ -352,7 +345,7 @@ export default function Navbar() {
                           onClick={handleProductClick}
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                         >
-                          <div className="relative w-12 h-12 flex-shrink-0">
+                          <div className="relative w-12 h-12 shrink-0">
                             <Image
                               src={product.image}
                               alt={product.name}
@@ -411,18 +404,87 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
+          {/* Mobile Search Bar - Always visible on small screens */}
+          <div className="lg:hidden relative flex-1 mx-2 sm:mx-3">
+            <form onSubmit={handleSearchSubmit}>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  placeholder="Search..."
+                  className="w-full pl-8 sm:pl-9 pr-7 sm:pr-8 py-1.5 sm:py-2 bg-gray-100 border border-transparent rounded-lg sm:rounded-xl text-xs sm:text-sm focus:bg-white focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                )}
+              </div>
+            </form>
+
+            {/* Mobile Search Results Dropdown */}
+            <AnimatePresence>
+              {isSearchFocused && searchQuery.length >= 2 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 max-h-80 overflow-y-auto"
+                >
+                  {searchResults.length > 0 ? (
+                    <div className="p-2">
+                      <p className="px-2 py-1 text-xs font-semibold text-gray-400 uppercase">
+                        Products ({searchResults.length})
+                      </p>
+                      <div className="space-y-1">
+                        {searchResults.slice(0, 5).map((product) => (
+                          <Link
+                            key={product._id}
+                            href={`/productDetails/${product._id}`}
+                            onClick={handleProductClick}
+                            className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="relative w-10 h-10 shrink-0">
+                              <Image
+                                src={product.image}
+                                alt={product.name}
+                                fill
+                                sizes="40px"
+                                className="object-cover rounded-md"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-gray-800 line-clamp-1">
+                                {product.name}
+                              </p>
+                              <p className="text-xs font-semibold text-sky-600">
+                                ৳{product.price.toLocaleString()}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center">
+                      <Package className="w-8 h-8 text-gray-300 mx-auto mb-1" />
+                      <p className="text-xs text-gray-500">No products found</p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* Right Actions */}
           <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
-            {/* Mobile Search Button */}
-            <motion.button
-              whileHover={{ y: -2 }}
-              onClick={() => setShowMobileSearch(!showMobileSearch)}
-              className="lg:hidden p-2 sm:p-2.5 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-colors"
-              aria-label="Search"
-            >
-              <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            </motion.button>
-
             {/* Wishlist */}
             <Link href="/wilishlist">
               <motion.button
@@ -597,111 +659,6 @@ export default function Navbar() {
             </motion.button>
           </div>
         </div>
-
-        {/* Mobile Search Dropdown */}
-        <AnimatePresence>
-          {showMobileSearch && (
-            <motion.div
-              ref={mobileSearchRef}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden border-t border-gray-100 bg-white px-3 sm:px-4 py-2 sm:py-3"
-            >
-              <form onSubmit={handleSearchSubmit}>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products..."
-                    autoFocus
-                    className="w-full pl-10 pr-10 py-3 bg-gray-100 border border-transparent rounded-xl text-sm focus:bg-white focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition-all"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </form>
-
-              {/* Mobile Search Results */}
-              {searchQuery.length >= 2 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-3 max-h-80 overflow-y-auto"
-                >
-                  {searchResults.length > 0 ? (
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold text-gray-400 uppercase">
-                        Products ({searchResults.length})
-                      </p>
-                      {searchResults.map((product) => (
-                        <Link
-                          key={product._id}
-                          href={`/productDetails/${product._id}`}
-                          onClick={handleProductClick}
-                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-                        >
-                          <div className="relative w-14 h-14 flex-shrink-0">
-                            <Image
-                              src={product.image}
-                              alt={product.name}
-                              fill
-                              sizes="56px"
-                              className="object-cover rounded-lg"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
-                              {product.name}
-                            </p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-sm font-semibold text-gray-900">
-                                ৳{product.price?.toLocaleString()}
-                              </span>
-                              {product.originalPrice > product.price && (
-                                <span className="text-xs text-gray-400 line-through">
-                                  ৳{product.originalPrice?.toLocaleString()}
-                                </span>
-                              )}
-                            </div>
-                            <span className="text-xs text-gray-500">{product.category}</span>
-                          </div>
-                          {product.stock > 0 ? (
-                            <span className="text-xs text-green-600">In Stock</span>
-                          ) : (
-                            <span className="text-xs text-red-600">Out of Stock</span>
-                          )}
-                        </Link>
-                      ))}
-                      <button
-                        onClick={handleSearchSubmit}
-                        className="w-full text-center text-sm text-gray-600 hover:text-gray-900 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors mt-2"
-                      >
-                        View all results for &quot;{searchQuery}&quot; →
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="py-8 text-center">
-                      <Package className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">No products found for &quot;{searchQuery}&quot;</p>
-                      <p className="text-xs text-gray-400 mt-1">Try a different search term</p>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Mobile Menu */}
         <AnimatePresence>

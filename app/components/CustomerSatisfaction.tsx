@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { X, ChevronLeft, ChevronRight, Star, Award, ThumbsUp, Users, Quote } from 'lucide-react'
+import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, Star, Award, ThumbsUp, Users, Quote, ChevronRight, ArrowRight, ImageIcon } from 'lucide-react'
 
 interface GalleryImage {
   _id: string
@@ -15,7 +17,6 @@ export default function CustomerSatisfaction() {
   const [showGallery, setShowGallery] = useState(false)
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(0)
 
   // Fetch gallery images when popup opens
   const openGallery = async () => {
@@ -39,12 +40,10 @@ export default function CustomerSatisfaction() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!showGallery) return
       if (e.key === 'Escape') setShowGallery(false)
-      if (e.key === 'ArrowLeft') setSelectedIndex(prev => Math.max(0, prev - 1))
-      if (e.key === 'ArrowRight') setSelectedIndex(prev => Math.min(galleryImages.length - 1, prev + 1))
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [showGallery, galleryImages.length])
+  }, [showGallery])
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -61,7 +60,7 @@ export default function CustomerSatisfaction() {
   return (
     <>
       {/* Banner Section */}
-      <section className=" py-10 bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 relative overflow-hidden">
+      <section className="py-10 bg-gradient-to-br from-sky-600 via-sky-500 to-cyan-500 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
@@ -169,132 +168,106 @@ export default function CustomerSatisfaction() {
                 </div>
               </div>
             </div>
-
-
-
-
-
-            
           </div>
         </div>
       </section>
 
-      {/* Gallery Popup Modal */}
-      {showGallery && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            onClick={() => setShowGallery(false)}
-          />
+      {/* Collage Gallery Modal */}
+      <AnimatePresence>
+        {showGallery && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          >
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+              onClick={() => setShowGallery(false)}
+            />
 
-          {/* Modal Content */}
-          <div className="relative w-full max-w-6xl max-h-[90vh] mx-4 bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 md:p-6 border-b bg-gradient-to-r from-sky-500 to-cyan-500">
-              <div>
-                <h3 className="text-xl md:text-2xl font-bold text-white">Customer Review Gallery</h3>
-                <p className="text-white/80 text-sm">Real screenshots from our happy customers</p>
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl"
+            >
+              {/* Header */}
+              <div className="relative bg-gradient-to-r from-sky-500 to-cyan-500 px-6 py-5 md:px-8 md:py-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl md:text-2xl font-bold text-white">Customer Reviews</h3>
+                    <p className="text-white/80 text-sm mt-1">Real feedback from our happy customers</p>
+                  </div>
+                  <button
+                    onClick={() => setShowGallery(false)}
+                    className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => setShowGallery(false)}
-                className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
-              >
-                <X className="w-5 h-5 text-white" />
-              </button>
-            </div>
 
-            {/* Gallery Content */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-6">
-              {loading ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
-                </div>
-              ) : galleryImages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-                  <Star className="w-16 h-16 text-gray-300 mb-4" />
-                  <p className="text-lg font-medium">No reviews yet</p>
-                  <p className="text-sm">Check back soon for customer reviews!</p>
-                </div>
-              ) : (
-                <>
-                  {/* Main Selected Image */}
-                  <div className="mb-6">
-                    <div className="relative aspect-[16/10] md:aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden">
-                      <Image
-                        src={galleryImages[selectedIndex]?.image || ''}
-                        alt={galleryImages[selectedIndex]?.caption || 'Customer review'}
-                        fill
-                        className="object-contain"
-                      />
-                      
-                      {/* Navigation Arrows */}
-                      {galleryImages.length > 1 && (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setSelectedIndex(prev => Math.max(0, prev - 1))
-                            }}
-                            disabled={selectedIndex === 0}
-                            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 disabled:opacity-30 rounded-full flex items-center justify-center transition-colors"
-                          >
-                            <ChevronLeft className="w-6 h-6 text-white" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setSelectedIndex(prev => Math.min(galleryImages.length - 1, prev + 1))
-                            }}
-                            disabled={selectedIndex === galleryImages.length - 1}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 disabled:opacity-30 rounded-full flex items-center justify-center transition-colors"
-                          >
-                            <ChevronRight className="w-6 h-6 text-white" />
-                          </button>
-                        </>
-                      )}
-
-                      {/* Image Counter */}
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 rounded-full text-white text-sm">
-                        {selectedIndex + 1} / {galleryImages.length}
-                      </div>
+              {/* Collage Content */}
+              <div className="p-4 md:p-6">
+                {loading ? (
+                  <div className="flex items-center justify-center py-16">
+                    <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : galleryImages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                      <ImageIcon className="w-10 h-10 text-gray-300" />
                     </div>
-
-                    {/* Caption */}
-                    {galleryImages[selectedIndex]?.caption && (
-                      <p className="text-center text-gray-600 mt-4 text-sm md:text-base">
-                        {galleryImages[selectedIndex].caption}
-                      </p>
-                    )}
+                    <p className="text-lg font-medium">No reviews yet</p>
+                    <p className="text-sm text-gray-400 mt-1">Check back soon for customer reviews!</p>
                   </div>
-
-                  {/* Thumbnail Grid */}
-                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 md:gap-3">
-                    {galleryImages.map((img, index) => (
-                      <button
-                        key={img._id}
-                        onClick={() => setSelectedIndex(index)}
-                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                          index === selectedIndex
-                            ? 'border-sky-500 ring-2 ring-sky-500/30'
-                            : 'border-transparent hover:border-gray-300'
-                        }`}
-                      >
-                        <Image
-                          src={img.image}
-                          alt={img.caption || `Review ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
+                ) : (
+                  /* Horizontal Collage Frame Grid - 2 rows */
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1 bg-gray-900 p-1 rounded-xl">
+                    {/* Image Cells */}
+                    {galleryImages.slice(0, 11).map((img, index) => (
+                      <div key={img._id} className="relative group">
+                        <div className="relative aspect-square overflow-hidden bg-gray-200">
+                          <Image
+                            src={img.image}
+                            alt={img.caption || `Review ${index + 1}`}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                        </div>
+                      </div>
                     ))}
+
+                    {/* View All Cell */}
+                    <Link
+                      href="/reviews"
+                      onClick={() => setShowGallery(false)}
+                      className="relative group"
+                    >
+                      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-sky-500 to-cyan-500 flex flex-col items-center justify-center text-white hover:from-sky-600 hover:to-cyan-600 transition-all">
+                        {galleryImages.length > 11 && (
+                          <span className="text-lg md:text-xl font-bold">+{galleryImages.length - 11}</span>
+                        )}
+                        <span className="text-xs md:text-sm font-medium flex items-center gap-1">
+                          View All <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </div>
+                    </Link>
                   </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

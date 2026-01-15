@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight, Loader2, Percent, ShoppingCart } from "lucid
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { addToCart } from "@/lib/redux/slices/cartSlice";
 import Swal from "sweetalert2";
+import DownloadApp from "./DownloadApp";
+
 
 interface HeroSlide {
   _id: string;
@@ -203,79 +205,86 @@ export default function HeroCarousel() {
   return (
     <section className="py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="flex flex-col lg:flex-row gap-4">
-        {/* Main Carousel */}
-        <div
-          className="relative w-full lg:w-2/3 h-[200px] sm:h-[300px] md:h-[380px] lg:h-[450px] rounded-2xl overflow-hidden group"
-          onMouseEnter={() => setIsAutoPlaying(false)}
-          onMouseLeave={() => setIsAutoPlaying(true)}
-        >
-          {/* Slides */}
-          {mainSlides.map((slide, index) => (
-            <Link
-              key={slide._id}
-              href={slide.link}
-              className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-                index === currentSlide
-                  ? "opacity-100 translate-x-0"
-                  : index < currentSlide
-                  ? "opacity-0 -translate-x-full"
-                  : "opacity-0 translate-x-full"
-              }`}
-            >
-              {/* Banner Image */}
-              <Image
-                src={slide.image}
-                alt={slide.alt}
-                fill
-                className="object-cover"
-                priority={index === 0}
-                sizes="(max-width: 768px) 100vw, 66vw"
-              />
-            </Link>
-          ))}
 
-          {/* Navigation Arrows */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              prevSlide();
-            }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-            aria-label="Previous slide"
+        {/* Left Side - Carousel + Download App */}
+        <div className="w-full lg:w-2/3 flex flex-col gap-4">
+          {/* Main Carousel */}
+          <div
+            className="relative w-full h-[200px] sm:h-[300px] md:h-[380px] lg:h-[400px] rounded-2xl overflow-hidden group"
+            onMouseEnter={() => setIsAutoPlaying(false)}
+            onMouseLeave={() => setIsAutoPlaying(true)}
           >
-            <ChevronLeft className="w-6 h-6 text-gray-800" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              nextSlide();
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-            aria-label="Next slide"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-800" />
-          </button>
-
-          {/* Dots Indicator */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-            {mainSlides.map((_, index) => (
-              <button
-                key={index}
-                onClick={(e) => {
-                  e.preventDefault();
-                  goToSlide(index);
-                }}
-                className={`transition-all duration-300 rounded-full ${
+            {/* Slides */}
+            {mainSlides.map((slide, index) => (
+              <Link
+                key={slide._id}
+                href={slide.link}
+                className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                   index === currentSlide
-                    ? "w-8 h-3 bg-sky-500"
-                    : "w-3 h-3 bg-white/60 hover:bg-white/80"
+                    ? "opacity-100 translate-x-0"
+                    : index < currentSlide
+                    ? "opacity-0 -translate-x-full"
+                    : "opacity-0 translate-x-full"
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
+              >
+                {/* Banner Image */}
+                <Image
+                  src={slide.image}
+                  alt={slide.alt}
+                  fill
+                  className="object-cover"
+                  priority={index === 0}
+                  sizes="(max-width: 768px) 100vw, 66vw"
+                />
+              </Link>
             ))}
-          </div>
-        </div>
 
+            {/* Navigation Arrows */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                prevSlide();
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-800" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                nextSlide();
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-800" />
+            </button>
+
+            {/* Dots Indicator */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+              {mainSlides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                  }}
+                  className={`transition-all duration-300 rounded-full ${
+                    index === currentSlide
+                      ? "w-8 h-3 bg-sky-500"
+                      : "w-3 h-3 bg-white/60 hover:bg-white/80"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Download App Section */}
+          <DownloadApp />
+        </div>
+      
         {/* Special Discount Products */}
         <div className="w-full lg:w-1/3">
           <div className="bg-gradient-to-br from-sky-50 to-red-50 rounded-2xl p-4 h-full">
@@ -352,6 +361,8 @@ export default function HeroCarousel() {
             )}
           </div>
         </div>
+
+
       </div>
     </section>
   );
