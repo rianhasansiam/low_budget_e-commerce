@@ -15,14 +15,21 @@ import {
   Calendar,
   MapPin,
   Banknote,
-  Phone
+  Phone,
+  Star,
+  X,
+  Send,
+  ImagePlus,
+  Trash2
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import Swal from 'sweetalert2'
 
 // Order item interface matching API response
 interface OrderItem {
   product_id: string
+  productId?: string
   name: string
   quantity: number
   unit_price: number
@@ -101,6 +108,17 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState<string>('all')
+  
+  // Review modal state
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [reviewItem, setReviewItem] = useState<{ orderId: string; productId: string; productName: string; productImage: string } | null>(null)
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewTitle, setReviewTitle] = useState('')
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewImages, setReviewImages] = useState<string[]>([])
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [reviewedProducts, setReviewedProducts] = useState<Set<string>>(new Set())
 
   // Fetch user's orders
   useEffect(() => {
@@ -153,6 +171,140 @@ export default function OrdersPage() {
       month: 'short',
       day: 'numeric'
     })
+  }
+
+  // Open review modal
+  const openReviewModal = (orderId: string, item: OrderItem) => {
+    const productId = item.productId || item.product_id
+    setReviewItem({
+      orderId,
+      productId,
+      productName: item.name,
+      productImage: item.image || ''
+    })
+    setReviewRating(5)
+    setReviewTitle('')
+    setReviewComment('')
+    setReviewImages([])
+    setShowReviewModal(true)
+  }
+
+  // Handle image upload (convert to base64)
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    // Limit to 3 images
+    if (reviewImages.length >= 3) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Limit Reached',
+        text: 'You can upload maximum 3 images',
+        confirmButtonColor: '#111827'
+      })
+      return
+    }
+
+    setUploadingImage(true)
+    try {
+      const file = files[0]
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid File',
+          text: 'Please upload an image file',
+          confirmButtonColor: '#111827'
+        })
+        return
+      }
+
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+          icon: 'error',
+          title: 'File Too Large',
+          text: 'Image must be less than 2MB',
+          confirmButtonColor: '#111827'
+        })
+        return
+      }
+
+      // Convert to base64
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64 = reader.result as string
+        setReviewImages(prev => [...prev, base64])
+      }
+      reader.readAsDataURL(file)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    } finally {
+      setUploadingImage(false)
+      // Reset input
+      e.target.value = ''
+    }
+  }
+
+  // Remove uploaded image
+  const removeImage = (index: number) => {
+    setReviewImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  // Submit review
+  const submitReview = async () => {
+    if (!reviewItem) return
+
+    setSubmittingReview(true)
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          productId: reviewItem.productId,
+          orderId: reviewItem.orderId,
+          rating: reviewRating,
+          title: reviewTitle,
+          comment: reviewComment,
+          images: reviewImages
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Review Submitted!',
+          text: 'Thank you for your feedback.',
+          confirmButtonColor: '#111827',
+          timer: 2000,
+          timerProgressBar: true
+        })
+        setShowReviewModal(false)
+        // Mark this product as reviewed
+        setReviewedProducts(prev => new Set([...prev, `${reviewItem.orderId}-${reviewItem.productId}`]))
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.error || 'Failed to submit review',
+          confirmButtonColor: '#111827'
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to submit review. Please try again.',
+        confirmButtonColor: '#111827'
+      })
+    } finally {
+      setSubmittingReview(false)
+    }
   }
 
   // Loading state
@@ -304,11 +456,26 @@ export default function OrdersPage() {
                               </div>
                             )}
                           </div>
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="font-medium text-gray-900 text-sm line-clamp-1">{item.name}</p>
                             <p className="text-xs text-gray-500">
                               Qty: {item.quantity} × ৳{item.unit_price?.toLocaleString('en-BD')}
                             </p>
+                            {/* Review Button for Delivered Orders */}
+                            {order.status === 'delivered' && (
+                              <button
+                                onClick={() => openReviewModal(order._id, item)}
+                                disabled={reviewedProducts.has(`${order._id}-${item.productId || item.product_id}`)}
+                                className={`mt-1 flex items-center gap-1 text-xs font-medium transition-colors ${
+                                  reviewedProducts.has(`${order._id}-${item.productId || item.product_id}`)
+                                    ? 'text-green-600 cursor-default'
+                                    : 'text-sky-600 hover:text-sky-700'
+                                }`}
+                              >
+                                <Star className="w-3 h-3" />
+                                {reviewedProducts.has(`${order._id}-${item.productId || item.product_id}`) ? 'Reviewed' : 'Write Review'}
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -362,6 +529,176 @@ export default function OrdersPage() {
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      {showReviewModal && reviewItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowReviewModal(false)}
+          />
+          
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowReviewModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-6">
+              {reviewItem.productImage && (
+                <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden relative shrink-0">
+                  <Image
+                    src={reviewItem.productImage}
+                    alt={reviewItem.productName}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Write a Review</h3>
+                <p className="text-sm text-gray-500 line-clamp-1">{reviewItem.productName}</p>
+              </div>
+            </div>
+
+            {/* Rating */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Your Rating</label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setReviewRating(star)}
+                    className="p-1 transition-transform hover:scale-110"
+                  >
+                    <Star
+                      className={`w-8 h-8 ${
+                        star <= reviewRating
+                          ? 'text-yellow-400 fill-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Title */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Review Title (Optional)
+              </label>
+              <input
+                type="text"
+                value={reviewTitle}
+                onChange={(e) => setReviewTitle(e.target.value)}
+                placeholder="Summarize your experience"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+              />
+            </div>
+
+            {/* Comment */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Your Review (Optional)
+              </label>
+              <textarea
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Share your experience with this product..."
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 resize-none"
+              />
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add Photos (Optional)
+              </label>
+              
+              {/* Uploaded Images Preview */}
+              {reviewImages.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {reviewImages.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
+                        <Image
+                          src={img}
+                          alt={`Review image ${index + 1}`}
+                          width={80}
+                          height={80}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Upload Button */}
+              {reviewImages.length < 3 && (
+                <label className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-sky-400 hover:bg-sky-50 transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                  {uploadingImage ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                      <span className="text-sm text-gray-500">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus className="w-5 h-5 text-gray-400" />
+                      <span className="text-sm text-gray-500">
+                        Add Photo ({reviewImages.length}/3)
+                      </span>
+                    </>
+                  )}
+                </label>
+              )}
+              <p className="text-xs text-gray-400 mt-1">Max 2MB per image</p>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={submitReview}
+              disabled={submittingReview}
+              className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white py-3 rounded-xl font-semibold hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
+            >
+              {submittingReview ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  Submit Review
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
