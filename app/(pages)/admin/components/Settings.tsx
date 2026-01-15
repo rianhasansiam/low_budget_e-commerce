@@ -19,7 +19,8 @@ import {
   Eye,
   EyeOff,
   Percent,
-  Search
+  Search,
+  Megaphone
 } from 'lucide-react'
 import Swal from 'sweetalert2'
 
@@ -30,6 +31,13 @@ interface ShippingSettings {
   enableFreeShipping: boolean
 }
 
+interface TopBannerSettings {
+  message: string
+  enabled: boolean
+  backgroundColor: string
+  textColor: string
+}
+
 interface SiteSettings {
   _id?: string
   shipping: ShippingSettings
@@ -38,6 +46,7 @@ interface SiteSettings {
     currency: string
     currencySymbol: string
   }
+  topBanner?: TopBannerSettings
 }
 
 interface HeroSlide {
@@ -172,13 +181,15 @@ export default function Settings() {
       const response = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(settingsToSave)
       })
       
       const data = await response.json()
+      console.log('Settings save response:', { status: response.status, data })
       
       if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to update settings')
+        throw new Error(data.error || `Failed to update settings (${response.status})`)
       }
     } catch (error) {
       console.error('Error saving settings:', error)
@@ -211,6 +222,47 @@ export default function Settings() {
     saveTimeoutRef.current = setTimeout(() => {
       autoSaveSettings(newSettings)
     }, 500) // Save after 500ms of no changes
+  }
+
+  const updateTopBanner = (field: keyof TopBannerSettings, value: string | boolean, shouldSave: boolean = true) => {
+    if (!settings) return
+    
+    const currentBanner = settings.topBanner || {
+      message: '',
+      enabled: false,
+      backgroundColor: '#1f2937',
+      textColor: '#ffffff'
+    }
+    
+    const newSettings = {
+      ...settings,
+      topBanner: {
+        ...currentBanner,
+        [field]: value
+      }
+    }
+    setSettings(newSettings)
+    
+    // Only save if shouldSave is true (skip during continuous color picking)
+    if (shouldSave) {
+      // Debounced auto-save
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+      saveTimeoutRef.current = setTimeout(() => {
+        autoSaveSettings(newSettings)
+      }, 500)
+    }
+  }
+  
+  // Save current settings immediately (used when color picker closes)
+  const saveCurrentSettings = () => {
+    if (settings) {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+      autoSaveSettings(settings)
+    }
   }
 
   // Hero Slides Functions
@@ -519,6 +571,131 @@ export default function Settings() {
         </div>
       </div>
 
+      {/* Top Banner Settings */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center">
+              <Megaphone className="w-5 h-5 text-sky-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Top Banner</h3>
+              <p className="text-sm text-gray-500">Display announcement banner at the top of your site</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Enable Banner Toggle */}
+          <div className="p-4 bg-gray-50 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                  <Eye className="w-5 h-5 text-sky-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">Enable Top Banner</p>
+                  <p className="text-sm text-gray-500">
+                    Show announcement banner on all pages
+                  </p>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.topBanner?.enabled || false}
+                  onChange={(e) => updateTopBanner('enabled', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-900/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
+              </label>
+            </div>
+          </div>
+
+          {/* Banner Message */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Banner Message
+            </label>
+            <textarea
+              value={settings.topBanner?.message || ''}
+              onChange={(e) => updateTopBanner('message', e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 resize-none"
+              placeholder="🎉 Special offer! Get 20% off on all products. Use code: SAVE20"
+              rows={2}
+            />
+            <p className="mt-1.5 text-xs text-gray-500">
+              Long messages will automatically scroll horizontally
+            </p>
+          </div>
+
+          {/* Color Settings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Background Color
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={settings.topBanner?.backgroundColor || '#1f2937'}
+                  onChange={(e) => updateTopBanner('backgroundColor', e.target.value, false)}
+                  onBlur={saveCurrentSettings}
+                  onMouseUp={saveCurrentSettings}
+                  className="w-12 h-12 rounded-lg border border-gray-200 cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={settings.topBanner?.backgroundColor || '#1f2937'}
+                  onChange={(e) => updateTopBanner('backgroundColor', e.target.value)}
+                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 font-mono text-sm"
+                  placeholder="#1f2937"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Text Color
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={settings.topBanner?.textColor || '#ffffff'}
+                  onChange={(e) => updateTopBanner('textColor', e.target.value, false)}
+                  onBlur={saveCurrentSettings}
+                  onMouseUp={saveCurrentSettings}
+                  className="w-12 h-12 rounded-lg border border-gray-200 cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={settings.topBanner?.textColor || '#ffffff'}
+                  onChange={(e) => updateTopBanner('textColor', e.target.value)}
+                  className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 font-mono text-sm"
+                  placeholder="#ffffff"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Preview */}
+          {settings.topBanner?.message && (
+            <div>
+              <h4 className="font-medium text-gray-900 mb-3">Preview</h4>
+              <div
+                className="py-2 px-4 text-center text-sm font-medium rounded-xl"
+                style={{
+                  backgroundColor: settings.topBanner?.backgroundColor || '#1f2937',
+                  color: settings.topBanner?.textColor || '#ffffff',
+                }}
+              >
+                {settings.topBanner.message}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Hero Slides Management */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-gray-100">
@@ -611,9 +788,9 @@ export default function Settings() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Percent className="w-5 h-5 text-orange-500" />
+                    <Percent className="w-5 h-5 text-sky-500" />
                     <h4 className="font-medium text-gray-900">Special Discount Products</h4>
-                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">
                       {specialDiscountProducts.length} selected
                     </span>
                   </div>
@@ -631,7 +808,7 @@ export default function Settings() {
                     placeholder="Search products..."
                     value={productSearch}
                     onChange={(e) => setProductSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>
 
@@ -643,7 +820,7 @@ export default function Settings() {
                       {specialDiscountProducts.map((product) => {
                         const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
                         return (
-                          <div key={product._id} className="relative bg-orange-50 border-2 border-orange-200 rounded-xl p-2">
+                          <div key={product._id} className="relative bg-sky-50 border-2 border-sky-200 rounded-xl p-2">
                             <div className="relative h-16 rounded-lg overflow-hidden mb-2">
                               <Image src={product.image} alt={product.name} fill sizes="100px" className="object-cover" />
                               <div className="absolute top-1 left-1 bg-red-500 text-white text-[10px] font-bold px-1 py-0.5 rounded">
@@ -651,7 +828,7 @@ export default function Settings() {
                               </div>
                             </div>
                             <p className="text-xs font-medium text-gray-900 line-clamp-1">{product.name}</p>
-                            <p className="text-xs text-orange-600 font-bold">৳{product.price.toLocaleString()}</p>
+                            <p className="text-xs text-sky-600 font-bold">৳{product.price.toLocaleString()}</p>
                             <button
                               onClick={() => handleToggleSpecialDiscount(product)}
                               className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full shadow hover:bg-red-600"
@@ -686,7 +863,7 @@ export default function Settings() {
                         return (
                           <div 
                             key={product._id} 
-                            className="flex items-center gap-3 p-2 border border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-colors cursor-pointer"
+                            className="flex items-center gap-3 p-2 border border-gray-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-colors cursor-pointer"
                             onClick={() => handleToggleSpecialDiscount(product)}
                           >
                             <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
@@ -698,11 +875,11 @@ export default function Settings() {
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-medium text-gray-900 line-clamp-1">{product.name}</p>
                               <div className="flex items-center gap-1">
-                                <span className="text-xs font-bold text-orange-600">৳{product.price.toLocaleString()}</span>
+                                <span className="text-xs font-bold text-sky-600">৳{product.price.toLocaleString()}</span>
                                 <span className="text-[10px] text-gray-400 line-through">৳{product.originalPrice.toLocaleString()}</span>
                               </div>
                             </div>
-                            <Plus className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                            <Plus className="w-5 h-5 text-sky-500 flex-shrink-0" />
                           </div>
                         )
                       })}

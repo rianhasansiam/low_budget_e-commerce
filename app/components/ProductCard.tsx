@@ -192,7 +192,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           className={`w-full py-2 rounded-lg font-medium text-xs transition-colors ${
             !product.stock || product.stock === 0 
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-              : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900'
+              : 'bg-black text-white hover:bg-sky-400 active:bg-sky-500'
           }`}
           aria-label="Add to cart"
         >

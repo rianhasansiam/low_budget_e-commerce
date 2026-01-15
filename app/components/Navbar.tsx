@@ -194,17 +194,17 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 mr-2 sm:mr-3 mt-1 w-[100px] sm:w-[120px] md:w-[140px] lg:w-[15%]">
+          <Link href="/" className="flex-shrink-0 mr-2 sm:mr-4">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="flex items-center justify-center w-full"
+              className="flex items-center"
             >
               <Image
                 src="/logo.png"
                 alt="Store Logo"
-                width={120}
-                height={100}
-                className="w-full h-auto object-contain"
+                width={140}
+                height={50}
+                className="w-[90px] sm:w-[110px] md:w-[130px] lg:w-[150px] h-auto object-contain"
                 priority
               />
             </motion.div>
@@ -292,7 +292,7 @@ export default function Navbar() {
                         isNavItemActive(item)
                           ? "bg-gray-900 text-white"
                           : item.adminOnly
-                          ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                          ? "text-sky-600 hover:text-sky-700 hover:bg-sky-50"
                           : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                       }`}
                     >
@@ -517,7 +517,7 @@ export default function Navbar() {
                                 {user?.email}
                               </p>
                               {isAdmin && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 mt-1">
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-sky-100 text-sky-700 mt-1">
                                   Admin
                                 </span>
                               )}
@@ -544,7 +544,7 @@ export default function Navbar() {
                           {isAdmin && (
                             <Link
                               href="/admin"
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-50 transition-colors"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-sky-600 hover:bg-sky-50 transition-colors"
                             >
                               <Shield className="w-4 h-4" />
                               Admin Panel
@@ -727,7 +727,7 @@ export default function Navbar() {
                           isNavItemActive(item)
                             ? "bg-gray-900 text-white"
                             : item.adminOnly
-                            ? "text-amber-600 hover:bg-amber-50"
+                            ? "text-sky-600 hover:bg-sky-50"
                             : "text-gray-700 hover:bg-gray-50"
                         }`}
                       >

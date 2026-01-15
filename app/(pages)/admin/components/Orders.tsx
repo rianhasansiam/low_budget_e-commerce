@@ -260,7 +260,7 @@ const Orders = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
       </div>
     )
   }
@@ -301,13 +301,13 @@ const Orders = () => {
             placeholder="Search by order ID, customer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm bg-white w-full sm:w-auto"
+          className="px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm bg-white w-full sm:w-auto"
         >
           <option value="">All Status</option>
           {statusOptions.map(status => (
@@ -345,7 +345,7 @@ const Orders = () => {
                   const { date, time } = formatDate(order.order_date)
                   return (
                     <tr key={order._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-orange-600">
+                      <td className="px-6 py-4 text-sm font-medium text-sky-600">
                         #{order._id.slice(-6).toUpperCase()}
                       </td>
                       <td className="px-6 py-4">
@@ -383,7 +383,7 @@ const Orders = () => {
                         <div className="flex items-center justify-end gap-1">
                           <button 
                             onClick={() => openOrderDetails(order)}
-                            className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            className="p-2 text-gray-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -418,7 +418,7 @@ const Orders = () => {
             return (
               <div key={order._id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-orange-600">
+                  <span className="text-sm font-semibold text-sky-600">
                     #{order._id.slice(-6).toUpperCase()}
                   </span>
                   <select
@@ -452,7 +452,7 @@ const Orders = () => {
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => openOrderDetails(order)}
-                      className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
@@ -496,8 +496,8 @@ const Orders = () => {
             <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Customer Info */}
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center shrink-0">
-                  <span className="text-orange-600 font-semibold text-sm sm:text-base">
+                <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center shrink-0">
+                  <span className="text-sky-600 font-semibold text-sm sm:text-base">
                     {selectedOrder.customer_name.charAt(0)}
                   </span>
                 </div>
@@ -535,7 +535,7 @@ const Orders = () => {
                 </div>
                 <div className="flex items-center justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
                   <p className="font-medium text-gray-900 text-sm sm:text-base">Total</p>
-                  <p className="text-base sm:text-lg font-bold text-orange-600">
+                  <p className="text-base sm:text-lg font-bold text-sky-600">
                     {formatCurrency(selectedOrder.total_amount)}
                   </p>
                 </div>
@@ -565,9 +565,9 @@ const Orders = () => {
 
               {/* Customer Notes */}
               {selectedOrder.notes && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                <div className="bg-sky-50 border border-sky-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
                   <div className="flex items-start gap-2 mb-2">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                     </svg>
                     <h4 className="font-medium text-gray-900 text-sm sm:text-base">Customer Notes</h4>
@@ -586,7 +586,7 @@ const Orders = () => {
                   onChange={(e) => {
                     handleStatusUpdate(selectedOrder._id, e.target.value)
                   }}
-                  className="flex-1 px-3 py-2 sm:px-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="flex-1 px-3 py-2 sm:px-4 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   {statusOptions.map(status => (
                     <option key={status} value={status}>

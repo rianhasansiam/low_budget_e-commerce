@@ -363,7 +363,7 @@ export default function ProfileClient() {
               <div className="flex items-center gap-3 justify-center sm:justify-start">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white">{userData?.name}</h2>
                 {userData?.role === 'admin' && (
-                  <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full text-xs font-bold text-white shadow-lg">
+                  <span className="px-3 py-1 bg-gradient-to-r from-sky-400 to-sky-500 rounded-full text-xs font-bold text-white shadow-lg">
                     ADMIN
                   </span>
                 )}
@@ -558,7 +558,7 @@ export default function ProfileClient() {
                         <Shield className="w-5 h-5 text-gray-400" />
                         <span className="text-gray-900 font-medium capitalize">{userData?.role}</span>
                         {userData?.role === 'admin' && (
-                          <span className="ml-auto px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                          <span className="ml-auto px-2 py-0.5 bg-sky-100 text-sky-700 text-xs font-medium rounded-full">
                             Full Access
                           </span>
                         )}

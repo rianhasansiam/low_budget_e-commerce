@@ -326,7 +326,7 @@ const Products = () => {
                           <div>
                             <span className="font-medium text-gray-900 text-sm">{product.name}</span>
                             {product.badge && (
-                              <span className="ml-2 px-1.5 py-0.5 bg-orange-100 text-orange-700 text-xs rounded">
+                              <span className="ml-2 px-1.5 py-0.5 bg-sky-100 text-sky-700 text-xs rounded">
                                 {product.badge}
                               </span>
                             )}
@@ -434,7 +434,7 @@ const Products = () => {
                   <div className="flex items-center gap-2 text-xs text-gray-500">
                     <span>Stock: {product.stock}</span>
                     {product.badge && (
-                      <span className="px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded">{product.badge}</span>
+                      <span className="px-1.5 py-0.5 bg-sky-100 text-sky-700 rounded">{product.badge}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
@@ -555,7 +555,7 @@ const Products = () => {
               <div>
                 <h4 className="text-xl font-semibold text-gray-900">{viewingProduct.name}</h4>
                 {viewingProduct.badge && (
-                  <span className="inline-block mt-1 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded">
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-sky-100 text-sky-700 text-xs rounded">
                     {viewingProduct.badge}
                   </span>
                 )}

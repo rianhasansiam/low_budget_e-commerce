@@ -190,7 +190,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
   const getStockStatus = () => {
     if (!product) return { text: '', color: '' }
     if (product.stock === 0) return { text: 'Out of Stock', color: 'text-red-600 bg-red-50' }
-    if (product.stock <= 5) return { text: `Only ${product.stock} left!`, color: 'text-orange-600 bg-orange-50' }
+    if (product.stock <= 5) return { text: `Only ${product.stock} left!`, color: 'text-sky-600 bg-sky-50' }
     return { text: 'In Stock', color: 'text-green-600 bg-green-50' }
   }
 
@@ -306,7 +306,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
               
               {/* Badge */}
               {product.badge && (
-                <span className="absolute top-4 left-4 px-3 py-1 bg-orange-500 text-white text-sm font-semibold rounded-full">
+                <span className="absolute top-4 left-4 px-3 py-1 bg-sky-500 text-white text-sm font-semibold rounded-full">
                   {product.badge}
                 </span>
               )}
@@ -328,7 +328,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
                     onClick={() => setSelectedImage(index)}
                     className={`relative w-20 h-20 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
                       selectedImage === index 
-                        ? 'border-orange-500 ring-2 ring-orange-200' 
+                        ? 'border-sky-500 ring-2 ring-sky-200' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -350,7 +350,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
             <div className="flex items-center justify-between">
               <Link 
                 href={`/category/${product.category.toLowerCase()}`}
-                className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                className="text-sm text-sky-600 hover:text-sky-700 font-medium"
               >
                 {product.category}
               </Link>
@@ -414,7 +414,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
                       onClick={() => setSelectedColor(color)}
                       className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
                         selectedColor === color
-                          ? 'border-orange-500 bg-orange-50 text-orange-700'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700'
                           : 'border-gray-200 hover:border-gray-300 text-gray-700'
                       }`}
                     >
@@ -467,7 +467,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
               <button
                 onClick={handleBuyNow}
                 disabled={product.stock === 0}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-sky-500 text-white rounded-xl font-semibold hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 Buy Now
               </button>
@@ -504,8 +504,8 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <RotateCcw className="w-5 h-5 text-orange-600" />
+                <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                  <RotateCcw className="w-5 h-5 text-sky-600" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">Easy Returns</p>
@@ -521,7 +521,7 @@ const ProductDetailsClient = ({ productId }: ProductDetailsClientProps) => {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="border-b border-gray-100">
               <div className="flex gap-8 px-6">
-                <button className="py-4 text-sm font-semibold text-orange-600 border-b-2 border-orange-500">
+                <button className="py-4 text-sm font-semibold text-sky-600 border-b-2 border-sky-500">
                   Description
                 </button>
                 {/* <button className="py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">

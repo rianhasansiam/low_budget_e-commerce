@@ -14,6 +14,12 @@ const defaultSettings = {
     siteName: "EngineersGadget",
     currency: "BDT",
     currencySymbol: "৳"
+  },
+  topBanner: {
+    message: "",
+    enabled: false,
+    backgroundColor: "#1f2937",
+    textColor: "#ffffff"
   }
 };
 
@@ -68,9 +74,10 @@ export async function PUT(request: NextRequest) {
       updatedAt: new Date()
     };
 
-    // Remove _id from update data if present
+    // Remove _id, type, and createdAt from update data if present
     delete updateData._id;
     delete updateData.type;
+    delete updateData.createdAt;
 
     const result = await collection.findOneAndUpdate(
       { type: "site_settings" },

@@ -79,8 +79,8 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
-          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ShieldX className="w-8 h-8 text-amber-500" />
+          <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ShieldX className="w-8 h-8 text-sky-500" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Access Required</h1>
           <p className="text-gray-500 mb-6">
@@ -225,7 +225,7 @@ export default function AdminPage() {
               </div>
               
               {/* Admin Badge */}
-              <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+              <span className="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-xs font-medium">
                 Admin
               </span>
             </div>

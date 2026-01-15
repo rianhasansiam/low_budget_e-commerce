@@ -85,7 +85,7 @@ export default function ActiveFilters({
       {stockFilter !== "all" && (
         <button
           onClick={onResetStock}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 text-orange-800 rounded-full text-sm hover:bg-orange-200"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-100 text-sky-800 rounded-full text-sm hover:bg-sky-200"
         >
           {stockFilter === "inStock" ? "In Stock" : "Out of Stock"} <X className="w-3.5 h-3.5" />
         </button>

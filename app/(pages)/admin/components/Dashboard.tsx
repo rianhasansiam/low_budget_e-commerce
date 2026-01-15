@@ -138,8 +138,8 @@ const Dashboard = () => {
       label: 'Customers', 
       value: stats.totalCustomers.toString(), 
       subtext: `${stats.totalCategories} categories`,
-      bgColor: 'bg-amber-50', 
-      iconColor: 'text-amber-600' 
+      bgColor: 'bg-sky-50', 
+      iconColor: 'text-sky-600' 
     }
   ]
 

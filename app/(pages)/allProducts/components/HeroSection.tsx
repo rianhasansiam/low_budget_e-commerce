@@ -47,7 +47,7 @@ export default function HeroSection({
           <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
             Discover our complete collection of premium electronic accessories.
             {totalProducts > 0 && (
-              <span className="block mt-2 text-yellow-400 font-medium">
+              <span className="block mt-2 text-sky-400 font-medium">
                 {totalProducts} products available
               </span>
             )}
@@ -67,7 +67,7 @@ export default function HeroSection({
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
+                className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition-all duration-300"
               />
               {searchQuery && (
                 <button

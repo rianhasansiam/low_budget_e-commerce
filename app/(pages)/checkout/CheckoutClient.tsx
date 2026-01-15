@@ -674,7 +674,7 @@ export default function CheckoutClient() {
                     </div>
                     <button
                       onClick={handlePrevStep}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                      className="text-sm text-sky-600 hover:text-sky-700 font-medium"
                     >
                       Edit
                     </button>
@@ -760,9 +760,9 @@ export default function CheckoutClient() {
                     />
                     <span className="text-sm text-gray-600">
                       I have read and agree to the{' '}
-                      <Link href="/terms" className="text-orange-600 hover:underline">Terms & Conditions</Link>
+                      <Link href="/terms" className="text-sky-600 hover:underline">Terms & Conditions</Link>
                       {' '}and{' '}
-                      <Link href="/privacy" className="text-orange-600 hover:underline">Privacy Policy</Link>
+                      <Link href="/privacy" className="text-sky-600 hover:underline">Privacy Policy</Link>
                     </span>
                   </label>
 
@@ -777,7 +777,7 @@ export default function CheckoutClient() {
                     <button
                       onClick={handlePlaceOrder}
                       disabled={isCreatingOrder || !agreedToTerms}
-                      className="flex-2 flex items-center justify-center gap-2 px-6 py-4 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                      className="flex-2 flex items-center justify-center gap-2 px-6 py-4 bg-sky-500 text-white rounded-xl font-semibold hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                     >
                       {isCreatingOrder ? (
                         <>

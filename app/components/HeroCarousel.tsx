@@ -182,7 +182,7 @@ export default function HeroCarousel() {
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
           </div>
           <div className="w-full lg:w-1/3">
-            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-4 h-full">
+            <div className="bg-gradient-to-br from-sky-50 to-red-50 rounded-2xl p-4 h-full">
               <div className="h-6 w-40 bg-gray-200 animate-pulse rounded mb-4" />
               <div className="grid grid-cols-2 gap-3">
                 {[1, 2, 3, 4].map((i) => (
@@ -267,7 +267,7 @@ export default function HeroCarousel() {
                 }}
                 className={`transition-all duration-300 rounded-full ${
                   index === currentSlide
-                    ? "w-8 h-3 bg-orange-500"
+                    ? "w-8 h-3 bg-sky-500"
                     : "w-3 h-3 bg-white/60 hover:bg-white/80"
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
@@ -278,9 +278,9 @@ export default function HeroCarousel() {
 
         {/* Special Discount Products */}
         <div className="w-full lg:w-1/3">
-          <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-4 h-full">
+          <div className="bg-gradient-to-br from-sky-50 to-red-50 rounded-2xl p-4 h-full">
             <div className="flex items-center gap-2 mb-4">
-              <Percent className="w-5 h-5 text-orange-500" />
+              <Percent className="w-5 h-5 text-sky-500" />
               <h3 className="font-bold text-gray-900">Special Discounts</h3>
             </div>
             
@@ -316,7 +316,7 @@ export default function HeroCarousel() {
                           {product.name}
                         </h4>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-bold text-orange-500">
+                          <span className="text-sm font-bold text-sky-500">
                             ৳{product.price.toLocaleString()}
                           </span>
                           <span className="text-xs text-gray-400 line-through">
@@ -326,7 +326,7 @@ export default function HeroCarousel() {
                       </Link>
                       <button
                         onClick={(e) => handleAddToCart(product, e)}
-                        className="mt-2 w-full bg-gray-900 hover:bg-gray-800 text-white text-xs py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                        className="mt-2 w-full bg-gray-900 hover:bg-sky-400 text-white text-xs py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
                       >
                         <ShoppingCart className="w-3 h-3" />
                         Add
@@ -345,7 +345,7 @@ export default function HeroCarousel() {
             {discountedProducts.length > 0 && (
               <Link
                 href="/allProducts"
-                className="mt-4 block text-center text-sm text-orange-500 hover:text-orange-600 font-medium transition-colors"
+                className="mt-4 block text-center text-sm text-sky-500 hover:text-sky-600 font-medium transition-colors"
               >
                 View All Deals →
               </Link>

@@ -166,7 +166,7 @@ const Customer = () => {
   if (usersLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
       </div>
     )
   }
@@ -200,7 +200,7 @@ const Customer = () => {
           placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
         />
       </div>
 
@@ -231,7 +231,7 @@ const Customer = () => {
                         className="w-12 h-12 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-sky-400 rounded-full flex items-center justify-center text-white font-bold">
                         {getInitials(customer.name)}
                       </div>
                     )}
@@ -259,7 +259,7 @@ const Customer = () => {
                   <div className="flex gap-1">
                     <button 
                       onClick={() => setSelectedUser(customer)}
-                      className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-600 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
                       title="View details"
                     >
                       <Eye className="w-4 h-4" />
@@ -334,7 +334,7 @@ const Customer = () => {
                   className="w-20 h-20 rounded-full object-cover mb-3"
                 />
               ) : (
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3">
+                <div className="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-400 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3">
                   {getInitials(selectedUser.name)}
                 </div>
               )}
@@ -376,7 +376,7 @@ const Customer = () => {
                       <span className="text-gray-600 flex items-center gap-2">
                         <ShoppingBag className="w-4 h-4" /> Total Orders
                       </span>
-                      <span className="font-bold text-orange-600">{stats.orderCount}</span>
+                      <span className="font-bold text-sky-600">{stats.orderCount}</span>
                     </div>
                     <div className="flex justify-between items-center py-3">
                       <span className="text-gray-600">Total Spent</span>

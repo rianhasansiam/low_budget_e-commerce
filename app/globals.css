@@ -10,6 +10,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Custom brand color - Light Blue #03B9F4 */
+  --color-brand-50: #e6f7fe;
+  --color-brand-100: #b3e8fc;
+  --color-brand-200: #80d9fa;
+  --color-brand-300: #4dcaf8;
+  --color-brand-400: #1abcf6;
+  --color-brand-500: #03B9F4;
+  --color-brand-600: #0299cc;
+  --color-brand-700: #0279a3;
+  --color-brand-800: #015a7a;
+  --color-brand-900: #013a51;
 }
 
 @media (prefers-color-scheme: dark) {

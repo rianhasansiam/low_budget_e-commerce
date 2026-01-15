@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import SocialFloatingButton from './SocialFloatingButton'
+import TopBanner from './TopBanner'
 
 export default function ConditionalLayout({
   children,
@@ -17,6 +18,7 @@ export default function ConditionalLayout({
 
   return (
     <>
+      {!isAdminPage && <TopBanner />}
       <Navbar />
       {children}
       {!isAdminPage && <Footer />}
